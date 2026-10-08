@@ -14,7 +14,13 @@ from typing import Any, ClassVar
 from django.utils import timezone
 from rest_framework import serializers
 
-from onboarding.models import OnboardingConfigModel, OnboardingPkiProtocol, OnboardingProtocol
+from onboarding.models import (
+    NoOnboardingConfigModel,
+    NoOnboardingPkiProtocol,
+    OnboardingConfigModel,
+    OnboardingPkiProtocol,
+    OnboardingProtocol,
+)
 
 from .models import DeviceModel
 
@@ -215,14 +221,139 @@ class OnboardingConfigSerializer(serializers.ModelSerializer[OnboardingConfigMod
         return instance
 
 
+class NoOnboardingConfigSerializer(serializers.ModelSerializer[NoOnboardingConfigModel]):
+    """Serializer for NoOnboardingConfig instances.
+
+    Handles conversion between NoOnboardingConfigModel objects and JSON
+    representations. Supports nested creation when creating a device without an
+    onboarding configuration (a "no-onboarding" device), which is a prerequisite
+    for issuing application certificates via the REST PKI enrollment endpoint.
+
+    Accepts both enum names (strings) and integer values for PKI protocols.
+    """
+
+    pki_protocols = serializers.ListField(
+        child=PkiProtocolField(),
+        required=False,
+        allow_empty=True,
+        write_only=True,
+        help_text=(
+            'List of PKI protocol names or values for the no-onboarding device. '
+            'Accepts: "CMP_SHARED_SECRET" (1), "EST_USERNAME_PASSWORD" (4), '
+            '"MANUAL" (16), "REST_USERNAME_PASSWORD" (32). '
+            'Can use names ["MANUAL", "REST_USERNAME_PASSWORD"], values [16, 32], or mix both.'
+        ),
+    )
+
+    class Meta:
+        """Metadata for NoOnboardingConfigSerializer."""
+
+        model = NoOnboardingConfigModel
+        fields: ClassVar[list[str]] = [
+            'id',
+            'pki_protocols',
+            'est_password',
+            'cmp_shared_secret',
+            'trust_store',
+        ]
+        read_only_fields: ClassVar[list[str]] = ['id']
+        extra_kwargs: ClassVar[dict[str, dict[str, str]]] = {
+            'est_password': {
+                'help_text': (
+                    'Password for EST/REST. Required when EST_USERNAME_PASSWORD or '
+                    'REST_USERNAME_PASSWORD is enabled; must be empty otherwise.'
+                )
+            },
+            'cmp_shared_secret': {
+                'help_text': (
+                    'Shared secret for CMP. Required when CMP_SHARED_SECRET is enabled; '
+                    'must be empty otherwise.'
+                )
+            },
+        }
+
+    def _parse_pki_protocol(
+        self, value: str | int | NoOnboardingPkiProtocol
+    ) -> NoOnboardingPkiProtocol:
+        """Parse a PKI protocol from a string name, integer value, or enum instance.
+
+        Args:
+            value: Either an enum name (e.g. "MANUAL"), an integer value (e.g. 16),
+                or a NoOnboardingPkiProtocol enum instance.
+
+        Returns:
+            The corresponding NoOnboardingPkiProtocol enum instance.
+
+        Raises:
+            serializers.ValidationError: If the value is not a valid protocol.
+        """
+        if isinstance(value, NoOnboardingPkiProtocol):
+            return value
+
+        if isinstance(value, int):
+            try:
+                return NoOnboardingPkiProtocol(value)
+            except ValueError:
+                valid_values = [p.value for p in NoOnboardingPkiProtocol]
+                msg = f'Invalid PKI protocol value: {value}. Valid values: {valid_values}'
+                raise serializers.ValidationError(msg) from None
+
+        try:
+            return NoOnboardingPkiProtocol[str(value).upper()]
+        except KeyError:
+            valid_names = [p.name for p in NoOnboardingPkiProtocol]
+            msg = f'Invalid PKI protocol name: {value}. Valid names: {valid_names}'
+            raise serializers.ValidationError(msg) from None
+
+    def create(self, validated_data: dict[str, Any]) -> NoOnboardingConfigModel:
+        """Create a NoOnboardingConfigModel instance with PKI protocol handling.
+
+        If no PKI protocols are supplied the device defaults to MANUAL, which
+        allows application-certificate issuance without requiring a shared
+        secret or password.
+        """
+        pki_protocol_values = validated_data.pop('pki_protocols', [])
+
+        instance = NoOnboardingConfigModel(**validated_data)
+
+        protocol_enums = (
+            [self._parse_pki_protocol(val) for val in pki_protocol_values]
+            if pki_protocol_values
+            else [NoOnboardingPkiProtocol.MANUAL]
+        )
+        instance.set_pki_protocols(protocol_enums)
+
+        instance.save()
+        return instance
+
+    def update(
+        self, instance: NoOnboardingConfigModel, validated_data: dict[str, Any]
+    ) -> NoOnboardingConfigModel:
+        """Update a NoOnboardingConfigModel instance with PKI protocol handling."""
+        pki_protocol_values = validated_data.pop('pki_protocols', None)
+
+        for attr, value in validated_data.items():
+            setattr(instance, attr, value)
+
+        if pki_protocol_values is not None:
+            protocol_enums = [self._parse_pki_protocol(val) for val in pki_protocol_values]
+            instance.set_pki_protocols(protocol_enums)
+
+        instance.save()
+        return instance
+
+
 class DeviceSerializer(serializers.ModelSerializer[DeviceModel]):
     """Serializer for Device instances.
 
     Handles conversion between Device model objects and JSON representations.
-    Supports nested creation of onboarding_config when provided in the request.
+    Supports nested creation of either onboarding_config or no_onboarding_config
+    when provided in the request. Exactly one of the two may be supplied, matching
+    the DeviceModel validation rule.
     """
 
     onboarding_config = OnboardingConfigSerializer(required=False, allow_null=True)
+    no_onboarding_config = NoOnboardingConfigSerializer(required=False, allow_null=True)
 
     class Meta:
         """Metadata for DeviceSerializer, defining model and serialized fields."""
@@ -230,19 +361,37 @@ class DeviceSerializer(serializers.ModelSerializer[DeviceModel]):
         model = DeviceModel
         fields = '__all__'
 
+    def validate(self, attrs: dict[str, Any]) -> dict[str, Any]:
+        """Reject requests that supply both onboarding and no-onboarding configs.
+
+        The DeviceModel requires exactly one of the two configurations. The
+        "neither supplied" case is left to the model's own validation so that
+        updates (which may omit both) are not incorrectly rejected here.
+        """
+        if attrs.get('onboarding_config') and attrs.get('no_onboarding_config'):
+            msg = 'Provide either onboarding_config or no_onboarding_config, not both.'
+            raise serializers.ValidationError(msg)
+        return attrs
+
     def create(self, validated_data: dict[str, Any]) -> DeviceModel:
-        """Create DeviceModel instance with nested onboarding_config if provided."""
+        """Create a DeviceModel with a nested onboarding or no-onboarding config."""
         onboarding_config_data = validated_data.pop('onboarding_config', None)
+        no_onboarding_config_data = validated_data.pop('no_onboarding_config', None)
 
         if onboarding_config_data:
             onboarding_config = OnboardingConfigSerializer().create(onboarding_config_data)
             validated_data['onboarding_config'] = onboarding_config
 
+        if no_onboarding_config_data:
+            no_onboarding_config = NoOnboardingConfigSerializer().create(no_onboarding_config_data)
+            validated_data['no_onboarding_config'] = no_onboarding_config
+
         return super().create(validated_data)
 
     def update(self, instance: DeviceModel, validated_data: dict[str, Any]) -> DeviceModel:
-        """Update DeviceModel instance, handling nested onboarding_config updates."""
+        """Update a DeviceModel, handling nested onboarding/no-onboarding updates."""
         onboarding_config_data = validated_data.pop('onboarding_config', None)
+        no_onboarding_config_data = validated_data.pop('no_onboarding_config', None)
 
         if onboarding_config_data is not None:
             if instance.onboarding_config:
@@ -250,5 +399,14 @@ class DeviceSerializer(serializers.ModelSerializer[DeviceModel]):
             else:
                 onboarding_config = OnboardingConfigSerializer().create(onboarding_config_data)
                 validated_data['onboarding_config'] = onboarding_config
+
+        if no_onboarding_config_data is not None:
+            if instance.no_onboarding_config:
+                NoOnboardingConfigSerializer().update(
+                    instance.no_onboarding_config, no_onboarding_config_data
+                )
+            else:
+                no_onboarding_config = NoOnboardingConfigSerializer().create(no_onboarding_config_data)
+                validated_data['no_onboarding_config'] = no_onboarding_config
 
         return super().update(instance, validated_data)

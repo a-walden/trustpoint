@@ -205,6 +205,110 @@ class TestDeviceViewSetCreate:
 
 
 @pytest.mark.django_db
+class TestDeviceViewSetCreateNoOnboardingConfig:
+    """Tests for creating no-onboarding devices with a nested no_onboarding_config."""
+
+    def test_create_device_with_nested_no_onboarding_config(
+        self, authenticated_client: APIClient
+    ) -> None:
+        """POST with a nested no_onboarding_config creates the config and device."""
+        payload = {
+            'common_name': 'technician',
+            'no_onboarding_config': {
+                'pki_protocols': [NoOnboardingPkiProtocol.MANUAL],
+            },
+        }
+        response = authenticated_client.post(reverse('device-list'), payload, format='json')
+        assert response.status_code == status.HTTP_201_CREATED
+
+        device = DeviceModel.objects.get(pk=response.data['id'])
+        assert device.onboarding_config is None
+        assert device.no_onboarding_config is not None
+        assert device.no_onboarding_config.has_pki_protocol(NoOnboardingPkiProtocol.MANUAL)
+
+    def test_create_device_nested_no_onboarding_defaults_to_manual(
+        self, authenticated_client: APIClient
+    ) -> None:
+        """Omitting pki_protocols defaults the no-onboarding device to MANUAL."""
+        payload = {
+            'common_name': 'technician-default',
+            'no_onboarding_config': {},
+        }
+        response = authenticated_client.post(reverse('device-list'), payload, format='json')
+        assert response.status_code == status.HTTP_201_CREATED
+
+        device = DeviceModel.objects.get(pk=response.data['id'])
+        assert device.no_onboarding_config is not None
+        assert device.no_onboarding_config.has_pki_protocol(NoOnboardingPkiProtocol.MANUAL)
+
+    def test_create_device_nested_no_onboarding_accepts_protocol_names(
+        self, authenticated_client: APIClient
+    ) -> None:
+        """String protocol names are accepted for the nested no_onboarding_config."""
+        payload = {
+            'common_name': 'technician-rest',
+            'no_onboarding_config': {
+                'pki_protocols': ['REST_USERNAME_PASSWORD'],
+                'est_password': 'rest-secret',
+            },
+        }
+        response = authenticated_client.post(reverse('device-list'), payload, format='json')
+        assert response.status_code == status.HTTP_201_CREATED
+
+        device = DeviceModel.objects.get(pk=response.data['id'])
+        assert device.no_onboarding_config is not None
+        assert device.no_onboarding_config.has_pki_protocol(NoOnboardingPkiProtocol.REST_USERNAME_PASSWORD)
+
+    def test_create_device_with_both_configs_returns_400(
+        self, authenticated_client: APIClient
+    ) -> None:
+        """Supplying both onboarding_config and no_onboarding_config is rejected."""
+        payload = {
+            'common_name': 'both-configs-device',
+            'onboarding_config': {
+                'onboarding_protocol': OnboardingProtocol.CMP_SHARED_SECRET,
+                'cmp_shared_secret': 'secret',
+                'pki_protocols': [OnboardingPkiProtocol.CMP],
+            },
+            'no_onboarding_config': {
+                'pki_protocols': [NoOnboardingPkiProtocol.MANUAL],
+            },
+        }
+        response = authenticated_client.post(reverse('device-list'), payload, format='json')
+        assert response.status_code == status.HTTP_400_BAD_REQUEST
+
+    def test_update_device_with_new_no_onboarding_config(
+        self, authenticated_client: APIClient
+    ) -> None:
+        """PATCH can attach a no_onboarding_config to a device that lacks one."""
+        # Create via onboarding first so the device starts without a no-onboarding config.
+        create_payload = {
+            'common_name': 'patch-no-onboarding',
+            'onboarding_config': {
+                'onboarding_protocol': OnboardingProtocol.CMP_SHARED_SECRET,
+                'cmp_shared_secret': 'secret',
+                'pki_protocols': [OnboardingPkiProtocol.CMP],
+            },
+        }
+        created = authenticated_client.post(reverse('device-list'), create_payload, format='json')
+        assert created.status_code == status.HTTP_201_CREATED
+        device_id = created.data['id']
+
+        url = reverse('device-detail', args=[device_id])
+        patch_payload = {
+            'no_onboarding_config': {
+                'pki_protocols': [NoOnboardingPkiProtocol.MANUAL],
+            },
+        }
+        response = authenticated_client.patch(url, patch_payload, format='json')
+        assert response.status_code == status.HTTP_200_OK
+
+        device = DeviceModel.objects.get(pk=device_id)
+        assert device.no_onboarding_config is not None
+        assert device.no_onboarding_config.has_pki_protocol(NoOnboardingPkiProtocol.MANUAL)
+
+
+@pytest.mark.django_db
 class TestDeviceViewSetUpdate:
     """Tests for PATCH /api/devices/{id}/."""
 
