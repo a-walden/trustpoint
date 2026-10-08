@@ -178,6 +178,13 @@ _https_port = int(os.getenv('TP_HTTPS_PORT', '443'))
 TP_HTTP_PORT = str(_http_port)
 TP_HTTPS_PORT = str(_https_port)
 
+# When enabled, omit the default (host-IP-derived) CRL Distribution Point from
+# issued certificates. The default CDP points at the Trustpoint host IP
+# (e.g. http://127.0.0.1/crl/<ca_id>), which is unreachable from end devices in
+# some deployments and makes client-side CRL checking fail. Profile-supplied CRL
+# Distribution Points are unaffected.
+TP_DISABLE_DEFAULT_CRL_DP = os.getenv('TP_DISABLE_DEFAULT_CRL_DP', 'false').strip().lower() in ('1', 'true', 'yes', 'on')
+
 # Parse comma-separated lists
 _tls_ipv4_addrs = [addr.strip() for addr in _tls_ipv4_raw.split(',') if addr.strip()]
 _tls_ipv6_addrs = [addr.strip() for addr in _tls_ipv6_raw.split(',') if addr.strip()]

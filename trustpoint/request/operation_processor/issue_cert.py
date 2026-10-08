@@ -329,14 +329,22 @@ class LocalCaCertificateIssueProcessor(CertificateIssueProcessor, LoggerMixin):
                 False,
             ),
             x509.SubjectKeyIdentifier: (x509.SubjectKeyIdentifier.from_public_key(public_key), False),
-            x509.CRLDistributionPoints: (x509.CRLDistributionPoints([
+        }
+
+        # The default CRL Distribution Point is derived from the Trustpoint host IP
+        # (e.g. http://127.0.0.1/crl/<ca_id>), which is unreachable from end devices
+        # in some deployments and causes client-side CRL checking to fail. When
+        # TP_DISABLE_DEFAULT_CRL_DP is enabled, the default CDP is omitted so issued
+        # certificates carry no (unreachable) CRL Distribution Point. A profile-supplied
+        # CDP (added earlier from the certificate profile) is unaffected either way.
+        if not getattr(settings, 'TP_DISABLE_DEFAULT_CRL_DP', False):
+            default_extensions[x509.CRLDistributionPoints] = (x509.CRLDistributionPoints([
                 x509.DistributionPoint(
                     full_name=[x509.UniformResourceIdentifier(
                         self._get_crl_distribution_point_url(context, ca.id)
                     )], relative_name=None, reasons=None, crl_issuer=None
                 ),
-            ]), False),
-        }
+            ]), False)
 
         for ext, critical in default_extensions.values():
             with contextlib.suppress(ValueError): # extension already present
