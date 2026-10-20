@@ -7,6 +7,51 @@ URL Patterns by App
 -------------------
 
 
+Agents
+^^^^^^
+
+.. list-table::
+   :header-rows: 1
+   :widths: 40 30 30
+
+   * - URL Pattern
+     - View
+     - Name
+   * - ``agents/<int:agent_id>/assigned-profiles/``
+     - ``view``
+     - ``assigned-profiles-list``
+   * - ``agents/<int:agent_id>/assigned-profiles/<int:pk>/edit/``
+     - ``view``
+     - ``assigned-profiles-edit``
+   * - ``agents/<int:agent_id>/assigned-profiles/<int:pk>/force-update/``
+     - ``view``
+     - ``assigned-profiles-force-update``
+   * - ``agents/<int:agent_id>/assigned-profiles/create/``
+     - ``view``
+     - ``assigned-profiles-create``
+   * - ``agents/^(?P<agent_id>[0-9]+)/assigned-profiles/delete(?:/(?P<pks>([0-9]+/)*[0-9]*))?/?$``
+     - ``view``
+     - ``assigned-profiles-delete_confirm``
+   * - ``agents/^profiles/delete(?:/(?P<pks>([0-9]+/)*[0-9]*))?/?$``
+     - ``view``
+     - ``profiles-delete_confirm``
+   * - ``agents/profiles/``
+     - ``view``
+     - ``profiles``
+   * - ``agents/profiles/<int:pk>/``
+     - ``view``
+     - ``profiles-config``
+   * - ``agents/profiles/create/``
+     - ``view``
+     - ``profiles-create``
+   * - ``api/agents/jobs/``
+     - ``view``
+     - ``agent-jobs``
+   * - ``api/agents/jobs/result/``
+     - ``view``
+     - ``agent-jobs-result``
+
+
 Aoki
 ^^^^
 
@@ -116,6 +161,12 @@ Devices
    * - ``devices/``
      - ``view``
      - ``devices``
+   * - ``devices/^agents/delete-device(?:/(?P<pks>[0-9]+(?:/[0-9]+)*))?/?$``
+     - ``view``
+     - ``agents_device_delete``
+   * - ``devices/^agents/revoke-device(?:/(?P<pks>[0-9]+(?:/[0-9]+)*))?/?$``
+     - ``view``
+     - ``agents_device_revoke``
    * - ``devices/^delete-device(?:/(?P<pks>[0-9]+(?:/[0-9]+)*))?/?$``
      - ``view``
      - ``devices_device_delete``
@@ -124,7 +175,7 @@ Devices
      - ``devices_device_delete``
    * - ``devices/^opc-ua-gds-push/revoke-device(?:/(?P<pks>[0-9]+(?:/[0-9]+)*))?/?$``
      - ``view``
-     - ``devices_device_revoke``
+     - ``opc_ua_gds_push_device_revoke``
    * - ``devices/^opc-ua-gds/delete-device(?:/(?P<pks>[0-9]+(?:/[0-9]+)*))?/?$``
      - ``view``
      - ``opc_ua_gds_device_delete``
@@ -137,6 +188,12 @@ Devices
    * - ``devices/^zero-touch-credentials/delete(?:/(?P<pks>([0-9]+/)*[0-9]*))?/?$``
      - ``view``
      - ``zero_touch_credentials-delete_confirm``
+   * - ``devices/agents/``
+     - ``view``
+     - ``agents``
+   * - ``devices/agents/create/1-to-1/``
+     - ``view``
+     - ``agents_create_one_to_one``
    * - ``devices/browser/``
      - ``view``
      - ``browser_login``
@@ -146,24 +203,51 @@ Devices
    * - ``devices/certificate-lifecycle-management/<int:pk>/``
      - ``view``
      - ``devices_certificate_lifecycle_management``
+   * - ``devices/certificate-lifecycle-management/<int:pk>/agent/setup-profile/``
+     - ``view``
+     - ``devices_agent_setup_profile_help``
+   * - ``devices/certificate-lifecycle-management/<int:pk>/agent/setup-profile/download-script/``
+     - ``view``
+     - ``devices_agent_setup_script_download``
+   * - ``devices/certificate-lifecycle-management/<int:pk>/agent/setup-profile/download/``
+     - ``view``
+     - ``devices_agent_setup_profile_download``
    * - ``devices/certificate-lifecycle-management/<int:pk>/no-onboarding/issue-application-credential/``
      - ``view``
      - ``devices_no_onboarding_clm_issue_application_credential``
    * - ``devices/certificate-lifecycle-management/<int:pk>/no-onboarding/issue-application-credential/cmp-shared-secret/``
      - ``view``
      - ``devices_no_onboarding_cmp_shared_secret_help``
+   * - ``devices/certificate-lifecycle-management/<int:pk>/no-onboarding/issue-application-credential/cmp-webui/``
+     - ``view``
+     - ``devices_no_onboarding_cmp_webui_help``
    * - ``devices/certificate-lifecycle-management/<int:pk>/no-onboarding/issue-application-credential/est-username-password/``
      - ``view``
      - ``devices_no_onboarding_est_username_password_help``
+   * - ``devices/certificate-lifecycle-management/<int:pk>/no-onboarding/issue-application-credential/est-webui/``
+     - ``view``
+     - ``devices_no_onboarding_est_webui_help``
    * - ``devices/certificate-lifecycle-management/<int:pk>/no-onboarding/issue-application-credential/manual/profile/<int:profile_id>/``
      - ``view``
      - ``devices_certificate_lifecycle_management_issue_profile_credential``
+   * - ``devices/certificate-lifecycle-management/<int:pk>/no-onboarding/issue-application-credential/manual/profile/<int:profile_id>/choose-method/``
+     - ``view``
+     - ``devices_certificate_lifecycle_management_choose_issuance_method``
+   * - ``devices/certificate-lifecycle-management/<int:pk>/no-onboarding/issue-application-credential/manual/profile/<int:profile_id>/csr/``
+     - ``view``
+     - ``devices_certificate_lifecycle_management_issue_csr_credential``
    * - ``devices/certificate-lifecycle-management/<int:pk>/no-onboarding/issue-application-credential/manual/select-certificate-profile``
      - ``view``
      - ``devices_no_onboarding_select_certificate_profile``
    * - ``devices/certificate-lifecycle-management/<int:pk>/no-onboarding/issue-application-credential/rest-username-password/``
      - ``view``
      - ``devices_no_onboarding_rest_username_password_help``
+   * - ``devices/certificate-lifecycle-management/<int:pk>/no-onboarding/issue-application-credential/scep/``
+     - ``view``
+     - ``devices_no_onboarding_scep_help``
+   * - ``devices/certificate-lifecycle-management/<int:pk>/no-onboarding/issue-application-credential/scep/download-config/``
+     - ``view``
+     - ``scep_config_download``
    * - ``devices/certificate-lifecycle-management/<int:pk>/onboarding/issue-application-credential/``
      - ``view``
      - ``devices_onboarding_clm_issue_application_credential``
@@ -185,6 +269,9 @@ Devices
    * - ``devices/certificate-lifecycle-management/<int:pk>/onboarding/issue-domain-credential/rest-username-password/``
      - ``view``
      - ``devices_certificate_lifecycle_management_issue_domain_credential_rest_username_password``
+   * - ``devices/certificate-lifecycle-management/<int:pk>/revoke/cmp/``
+     - ``view``
+     - ``devices_device_revoke_cmp_help``
    * - ``devices/certificate/download/<int:pk>/``
      - ``view``
      - ``devices_certificate-download``
@@ -281,18 +368,33 @@ Devices
    * - ``devices/opc-ua-gds/certificate-lifecycle-management/<int:pk>/no-onboarding/issue-application-credential/cmp-shared-secret/``
      - ``view``
      - ``opc_ua_gds_no_onboarding_cmp_shared_secret_help``
+   * - ``devices/opc-ua-gds/certificate-lifecycle-management/<int:pk>/no-onboarding/issue-application-credential/cmp-webui/``
+     - ``view``
+     - ``opc_ua_gds_no_onboarding_cmp_webui_help``
    * - ``devices/opc-ua-gds/certificate-lifecycle-management/<int:pk>/no-onboarding/issue-application-credential/est-username-password/``
      - ``view``
      - ``opc_ua_gds_no_onboarding_est_username_password_help``
+   * - ``devices/opc-ua-gds/certificate-lifecycle-management/<int:pk>/no-onboarding/issue-application-credential/est-webui/``
+     - ``view``
+     - ``opc_ua_gds_no_onboarding_est_webui_help``
    * - ``devices/opc-ua-gds/certificate-lifecycle-management/<int:pk>/no-onboarding/issue-application-credential/manual/profile/<int:profile_id>/``
      - ``view``
      - ``opc_ua_gds_certificate_lifecycle_management_issue_profile_credential``
+   * - ``devices/opc-ua-gds/certificate-lifecycle-management/<int:pk>/no-onboarding/issue-application-credential/manual/profile/<int:profile_id>/choose-method/``
+     - ``view``
+     - ``opc_ua_gds_certificate_lifecycle_management_choose_issuance_method``
+   * - ``devices/opc-ua-gds/certificate-lifecycle-management/<int:pk>/no-onboarding/issue-application-credential/manual/profile/<int:profile_id>/csr/``
+     - ``view``
+     - ``opc_ua_gds_certificate_lifecycle_management_issue_csr_credential``
    * - ``devices/opc-ua-gds/certificate-lifecycle-management/<int:pk>/no-onboarding/issue-application-credential/manual/select-certificate-profile``
      - ``view``
      - ``opc_ua_gds_no_onboarding_select_certificate_profile``
    * - ``devices/opc-ua-gds/certificate-lifecycle-management/<int:pk>/no-onboarding/issue-application-credential/rest-username-password/``
      - ``view``
      - ``opc_ua_gds_no_onboarding_rest_username_password_help``
+   * - ``devices/opc-ua-gds/certificate-lifecycle-management/<int:pk>/no-onboarding/issue-application-credential/scep/``
+     - ``view``
+     - ``opc_ua_gds_no_onboarding_scep_help``
    * - ``devices/opc-ua-gds/certificate-lifecycle-management/<int:pk>/onboarding/issue-application-credential/``
      - ``view``
      - ``opc_ua_gds_onboarding_clm_issue_application_credential``
@@ -403,6 +505,45 @@ Devices
      - ``zero_touch_credentials-truststore-association``
 
 
+Discovery
+^^^^^^^^^
+
+.. list-table::
+   :header-rows: 1
+   :widths: 40 30 30
+
+   * - URL Pattern
+     - View
+     - Name
+   * - ``discovery/``
+     - ``view``
+     - ``device_list``
+   * - ``discovery/clear/``
+     - ``view``
+     - ``clear_devices``
+   * - ``discovery/device/<int:device_id>/``
+     - ``view``
+     - ``device_detail``
+   * - ``discovery/export-csv/``
+     - ``view``
+     - ``export_csv``
+   * - ``discovery/port-config/``
+     - ``view``
+     - ``port_config``
+   * - ``discovery/port/add/``
+     - ``view``
+     - ``add_port``
+   * - ``discovery/port/delete/<int:port_id>/``
+     - ``view``
+     - ``delete_port``
+   * - ``discovery/start-scan/``
+     - ``view``
+     - ``start_scan``
+   * - ``discovery/stop-scan/``
+     - ``view``
+     - ``stop_scan``
+
+
 Django
 ^^^^^^
 
@@ -422,9 +563,63 @@ Django
    * - ``admin/(?P<url>.*)$``
      - ``catch_all_view``
      - ``-``
-   * - ``admin/^(?P<app_label>devices\|onboarding\|pki\|signer\|auth\|django_q\|workflows2)/$``
+   * - ``admin/^(?P<app_label>auth\|users\|devices\|onboarding\|pki\|signer\|agents\|discovery\|django_q\|workflows2)/$``
      - ``app_index``
      - ``app_list``
+   * - ``admin/agents/agentassignedprofile/``
+     - ``changelist_view``
+     - ``agents_agentassignedprofile_changelist``
+   * - ``admin/agents/agentassignedprofile/<path:object_id>/``
+     - ``view``
+     - ``-``
+   * - ``admin/agents/agentassignedprofile/<path:object_id>/change/``
+     - ``change_view``
+     - ``agents_agentassignedprofile_change``
+   * - ``admin/agents/agentassignedprofile/<path:object_id>/delete/``
+     - ``delete_view``
+     - ``agents_agentassignedprofile_delete``
+   * - ``admin/agents/agentassignedprofile/<path:object_id>/history/``
+     - ``history_view``
+     - ``agents_agentassignedprofile_history``
+   * - ``admin/agents/agentassignedprofile/add/``
+     - ``add_view``
+     - ``agents_agentassignedprofile_add``
+   * - ``admin/agents/agentprofiledefinition/``
+     - ``changelist_view``
+     - ``agents_agentprofiledefinition_changelist``
+   * - ``admin/agents/agentprofiledefinition/<path:object_id>/``
+     - ``view``
+     - ``-``
+   * - ``admin/agents/agentprofiledefinition/<path:object_id>/change/``
+     - ``change_view``
+     - ``agents_agentprofiledefinition_change``
+   * - ``admin/agents/agentprofiledefinition/<path:object_id>/delete/``
+     - ``delete_view``
+     - ``agents_agentprofiledefinition_delete``
+   * - ``admin/agents/agentprofiledefinition/<path:object_id>/history/``
+     - ``history_view``
+     - ``agents_agentprofiledefinition_history``
+   * - ``admin/agents/agentprofiledefinition/add/``
+     - ``add_view``
+     - ``agents_agentprofiledefinition_add``
+   * - ``admin/agents/trustpointagent/``
+     - ``changelist_view``
+     - ``agents_trustpointagent_changelist``
+   * - ``admin/agents/trustpointagent/<path:object_id>/``
+     - ``view``
+     - ``-``
+   * - ``admin/agents/trustpointagent/<path:object_id>/change/``
+     - ``change_view``
+     - ``agents_trustpointagent_change``
+   * - ``admin/agents/trustpointagent/<path:object_id>/delete/``
+     - ``delete_view``
+     - ``agents_trustpointagent_delete``
+   * - ``admin/agents/trustpointagent/<path:object_id>/history/``
+     - ``history_view``
+     - ``agents_trustpointagent_history``
+   * - ``admin/agents/trustpointagent/add/``
+     - ``add_view``
+     - ``agents_trustpointagent_add``
    * - ``admin/auth/group/``
      - ``changelist_view``
      - ``auth_group_changelist``
@@ -443,27 +638,6 @@ Django
    * - ``admin/auth/group/add/``
      - ``add_view``
      - ``auth_group_add``
-   * - ``admin/auth/user/``
-     - ``changelist_view``
-     - ``auth_user_changelist``
-   * - ``admin/auth/user/<id>/password/``
-     - ``user_change_password``
-     - ``auth_user_password_change``
-   * - ``admin/auth/user/<path:object_id>/``
-     - ``view``
-     - ``-``
-   * - ``admin/auth/user/<path:object_id>/change/``
-     - ``change_view``
-     - ``auth_user_change``
-   * - ``admin/auth/user/<path:object_id>/delete/``
-     - ``delete_view``
-     - ``auth_user_delete``
-   * - ``admin/auth/user/<path:object_id>/history/``
-     - ``history_view``
-     - ``auth_user_history``
-   * - ``admin/auth/user/add/``
-     - ``add_view``
-     - ``auth_user_add``
    * - ``admin/autocomplete/``
      - ``autocomplete_view``
      - ``autocomplete``
@@ -503,6 +677,24 @@ Django
    * - ``admin/devices/remotedevicecredentialdownloadmodel/add/``
      - ``add_view``
      - ``devices_remotedevicecredentialdownloadmodel_add``
+   * - ``admin/discovery/discoveryport/``
+     - ``changelist_view``
+     - ``discovery_discoveryport_changelist``
+   * - ``admin/discovery/discoveryport/<path:object_id>/``
+     - ``view``
+     - ``-``
+   * - ``admin/discovery/discoveryport/<path:object_id>/change/``
+     - ``change_view``
+     - ``discovery_discoveryport_change``
+   * - ``admin/discovery/discoveryport/<path:object_id>/delete/``
+     - ``delete_view``
+     - ``discovery_discoveryport_delete``
+   * - ``admin/discovery/discoveryport/<path:object_id>/history/``
+     - ``history_view``
+     - ``discovery_discoveryport_history``
+   * - ``admin/discovery/discoveryport/add/``
+     - ``add_view``
+     - ``discovery_discoveryport_add``
    * - ``admin/django_q/failure/``
      - ``changelist_view``
      - ``django_q_failure_changelist``
@@ -644,6 +836,24 @@ Django
    * - ``admin/pki/camodel/add/``
      - ``add_view``
      - ``pki_camodel_add``
+   * - ``admin/pki/carollovermodel/``
+     - ``changelist_view``
+     - ``pki_carollovermodel_changelist``
+   * - ``admin/pki/carollovermodel/<path:object_id>/``
+     - ``view``
+     - ``-``
+   * - ``admin/pki/carollovermodel/<path:object_id>/change/``
+     - ``change_view``
+     - ``pki_carollovermodel_change``
+   * - ``admin/pki/carollovermodel/<path:object_id>/delete/``
+     - ``delete_view``
+     - ``pki_carollovermodel_delete``
+   * - ``admin/pki/carollovermodel/<path:object_id>/history/``
+     - ``history_view``
+     - ``pki_carollovermodel_history``
+   * - ``admin/pki/carollovermodel/add/``
+     - ``add_view``
+     - ``pki_carollovermodel_add``
    * - ``admin/pki/certificatechainordermodel/``
      - ``changelist_view``
      - ``pki_certificatechainordermodel_changelist``
@@ -791,6 +1001,45 @@ Django
    * - ``admin/signer/signermodel/add/``
      - ``add_view``
      - ``signer_signermodel_add``
+   * - ``admin/users/serviceaccountcredential/``
+     - ``changelist_view``
+     - ``users_serviceaccountcredential_changelist``
+   * - ``admin/users/serviceaccountcredential/<path:object_id>/``
+     - ``view``
+     - ``-``
+   * - ``admin/users/serviceaccountcredential/<path:object_id>/change/``
+     - ``change_view``
+     - ``users_serviceaccountcredential_change``
+   * - ``admin/users/serviceaccountcredential/<path:object_id>/delete/``
+     - ``delete_view``
+     - ``users_serviceaccountcredential_delete``
+   * - ``admin/users/serviceaccountcredential/<path:object_id>/history/``
+     - ``history_view``
+     - ``users_serviceaccountcredential_history``
+   * - ``admin/users/serviceaccountcredential/add/``
+     - ``add_view``
+     - ``users_serviceaccountcredential_add``
+   * - ``admin/users/trustpointuser/``
+     - ``changelist_view``
+     - ``users_trustpointuser_changelist``
+   * - ``admin/users/trustpointuser/<id>/password/``
+     - ``user_change_password``
+     - ``auth_user_password_change``
+   * - ``admin/users/trustpointuser/<path:object_id>/``
+     - ``view``
+     - ``-``
+   * - ``admin/users/trustpointuser/<path:object_id>/change/``
+     - ``change_view``
+     - ``users_trustpointuser_change``
+   * - ``admin/users/trustpointuser/<path:object_id>/delete/``
+     - ``delete_view``
+     - ``users_trustpointuser_delete``
+   * - ``admin/users/trustpointuser/<path:object_id>/history/``
+     - ``history_view``
+     - ``users_trustpointuser_history``
+   * - ``admin/users/trustpointuser/add/``
+     - ``add_view``
+     - ``users_trustpointuser_add``
    * - ``admin/workflows2/workflow2approval/``
      - ``changelist_view``
      - ``workflows2_workflow2approval_changelist``
@@ -1052,6 +1301,18 @@ Management
    * - ``api/^backups\.(?P<format>[a-z0-9]+)/?$``
      - ``BackupViewSet``
      - ``backup-list``
+   * - ``api/^capabilities/$``
+     - ``CapabilitiesViewSet``
+     - ``capabilities-list``
+   * - ``api/^capabilities\.(?P<format>[a-z0-9]+)/?$``
+     - ``CapabilitiesViewSet``
+     - ``capabilities-list``
+   * - ``api/^health/$``
+     - ``HealthViewSet``
+     - ``health-list``
+   * - ``api/^health\.(?P<format>[a-z0-9]+)/?$``
+     - ``HealthViewSet``
+     - ``health-list``
    * - ``api/^logging/delete/(?P<file_name>[^/]+)/$``
      - ``LoggingViewSet``
      - ``logging-delete``
@@ -1070,6 +1331,24 @@ Management
    * - ``api/^logging/list_files\.(?P<format>[a-z0-9]+)/?$``
      - ``LoggingViewSet``
      - ``logging-list-files``
+   * - ``api/^roles/$``
+     - ``RoleViewSet``
+     - ``roles-list``
+   * - ``api/^roles/(?P<pk>[^/.]+)/$``
+     - ``RoleViewSet``
+     - ``roles-detail``
+   * - ``api/^roles/(?P<pk>[^/.]+)\.(?P<format>[a-z0-9]+)/?$``
+     - ``RoleViewSet``
+     - ``roles-detail``
+   * - ``api/^roles/available-permissions/$``
+     - ``RoleViewSet``
+     - ``roles-available-permissions``
+   * - ``api/^roles/available-permissions\.(?P<format>[a-z0-9]+)/?$``
+     - ``RoleViewSet``
+     - ``roles-available-permissions``
+   * - ``api/^roles\.(?P<format>[a-z0-9]+)/?$``
+     - ``RoleViewSet``
+     - ``roles-list``
    * - ``api/^tls/$``
      - ``TlsViewSet``
      - ``tls-list``
@@ -1082,6 +1361,18 @@ Management
    * - ``api/^tls\.(?P<format>[a-z0-9]+)/?$``
      - ``TlsViewSet``
      - ``tls-list``
+   * - ``api/^users/$``
+     - ``UserViewSet``
+     - ``users-list``
+   * - ``api/^users/(?P<pk>[^/.]+)/$``
+     - ``UserViewSet``
+     - ``users-detail``
+   * - ``api/^users/(?P<pk>[^/.]+)\.(?P<format>[a-z0-9]+)/?$``
+     - ``UserViewSet``
+     - ``users-detail``
+   * - ``api/^users\.(?P<format>[a-z0-9]+)/?$``
+     - ``UserViewSet``
+     - ``users-list``
    * - ``management/``
      - ``view``
      - ``index``
@@ -1103,6 +1394,9 @@ Management
    * - ``management/backend-configuration/``
      - ``view``
      - ``backend_configuration``
+   * - ``management/backend-configuration/pkcs11-assets/<str:asset>/download/``
+     - ``view``
+     - ``backend_configuration_pkcs11_asset_download``
    * - ``management/backups/``
      - ``view``
      - ``backups``
@@ -1151,12 +1445,57 @@ Management
    * - ``management/notifications/refresh/``
      - ``view``
      - ``refresh_notifications``
+   * - ``management/organization/``
+     - ``view``
+     - ``organization``
+   * - ``management/organization/<int:pk>/delete/``
+     - ``view``
+     - ``delete_organization``
+   * - ``management/organization/<int:pk>/edit/``
+     - ``view``
+     - ``edit_organization``
+   * - ``management/organization/add/``
+     - ``view``
+     - ``add_organization``
+   * - ``management/role_management/``
+     - ``view``
+     - ``role_management``
+   * - ``management/role_management/<int:pk>/delete/``
+     - ``view``
+     - ``delete_role``
+   * - ``management/role_management/<int:pk>/edit/``
+     - ``view``
+     - ``edit_role``
+   * - ``management/role_management/add/``
+     - ``view``
+     - ``add_role``
+   * - ``management/service-accounts/``
+     - ``view``
+     - ``service_account_list``
+   * - ``management/service-accounts/<int:pk>/``
+     - ``view``
+     - ``service_account_detail``
+   * - ``management/service-accounts/<int:pk>/delete/``
+     - ``view``
+     - ``delete_service_account``
+   * - ``management/service-accounts/<int:pk>/generate-credential/``
+     - ``generate_credential_view``
+     - ``generate_credential``
+   * - ``management/service-accounts/create/``
+     - ``view``
+     - ``service_account_create``
+   * - ``management/service-accounts/created/``
+     - ``service_account_created_view``
+     - ``service_account_created``
+   * - ``management/service-accounts/credentials/<int:pk>/revoke/``
+     - ``revoke_credential_view``
+     - ``revoke_credential``
    * - ``management/settings/``
      - ``view``
      - ``settings``
-   * - ``management/settings/internationalization/``
+   * - ``management/settings/account-security/``
      - ``view``
-     - ``settings-internationalization``
+     - ``settings-account-security``
    * - ``management/settings/logging/``
      - ``view``
      - ``settings-logging``
@@ -1169,15 +1508,24 @@ Management
    * - ``management/settings/security/``
      - ``view``
      - ``settings-security``
-   * - ``management/settings/ui/``
-     - ``view``
-     - ``settings-ui``
    * - ``management/tls/``
      - ``view``
      - ``tls``
    * - ``management/tls/activate/<int:pk>``
      - ``view``
      - ``activate-tls``
+   * - ``management/tls/add/external-csr/<int:pk>/``
+     - ``view``
+     - ``tls-external-csr``
+   * - ``management/tls/add/external-csr/<int:pk>/content/``
+     - ``view``
+     - ``tls-external-csr-content``
+   * - ``management/tls/add/external-csr/<int:pk>/truststore/``
+     - ``view``
+     - ``tls-external-csr-truststore``
+   * - ``management/tls/add/external-csr/key/``
+     - ``view``
+     - ``tls-external-csr-key``
    * - ``management/tls/add/file-import/pkcs12``
      - ``view``
      - ``tls-add-file_import-pkcs12``
@@ -1190,6 +1538,42 @@ Management
    * - ``management/tls/add/method-select/``
      - ``view``
      - ``tls-add-method_select``
+   * - ``management/user-authentication/``
+     - ``view``
+     - ``user_authentication``
+   * - ``management/user-authentication/certificate/``
+     - ``view``
+     - ``certificate_authentication``
+   * - ``management/user-authentication/password/``
+     - ``view``
+     - ``password_policy``
+   * - ``management/user-authentication/password/list/download/``
+     - ``view``
+     - ``password_policy_list_download``
+   * - ``management/user-management/``
+     - ``view``
+     - ``user_management``
+   * - ``management/user-management/<int:pk>/change_password/``
+     - ``view``
+     - ``change_password``
+   * - ``management/user-management/<int:pk>/change_role/``
+     - ``view``
+     - ``change_role``
+   * - ``management/user-management/<int:pk>/configure/``
+     - ``view``
+     - ``configure_user``
+   * - ``management/user-management/<int:pk>/delete/``
+     - ``view``
+     - ``delete_user``
+   * - ``management/user-management/<int:pk>/details/``
+     - ``view``
+     - ``user_details``
+   * - ``management/user-management/<int:pk>/reset_otp/``
+     - ``view``
+     - ``reset_otp``
+   * - ``management/user-management/add_user/``
+     - ``view``
+     - ``add_user``
 
 
 Pki
@@ -1442,6 +1826,9 @@ Pki
    * - ``pki/issuing-cas/``
      - ``view``
      - ``issuing_cas``
+   * - ``pki/issuing-cas/add/autogen/``
+     - ``view``
+     - ``issuing_cas-add-autogen``
    * - ``pki/issuing-cas/add/cmp-ra/``
      - ``view``
      - ``issuing_cas-add-cmp-ra``
@@ -1463,24 +1850,69 @@ Pki
    * - ``pki/issuing-cas/add/request-est/``
      - ``view``
      - ``issuing_cas-add-request-est``
+   * - ``pki/issuing-cas/add/request-external-csr/``
+     - ``view``
+     - ``issuing_cas-add-request-external-csr``
    * - ``pki/issuing-cas/config/<int:pk>/``
      - ``view``
      - ``issuing_cas-config``
    * - ``pki/issuing-cas/config/<int:pk>/help/crl-download/``
      - ``view``
      - ``help_issuing_cas_crl_download``
+   * - ``pki/issuing-cas/config/<int:pk>/rollover/<int:rollover_pk>/cancel/``
+     - ``view``
+     - ``issuing_cas-rollover-cancel``
+   * - ``pki/issuing-cas/config/<int:pk>/rollover/<int:rollover_pk>/complete/``
+     - ``view``
+     - ``issuing_cas-rollover-complete``
+   * - ``pki/issuing-cas/config/<int:pk>/rollover/<int:rollover_pk>/start/``
+     - ``view``
+     - ``issuing_cas-rollover-start``
+   * - ``pki/issuing-cas/config/<int:pk>/rollover/<int:rollover_pk>/transition/``
+     - ``view``
+     - ``issuing_cas-rollover-transition``
+   * - ``pki/issuing-cas/config/<int:pk>/rollover/file-method-select/``
+     - ``view``
+     - ``issuing_cas-rollover-file-method-select``
+   * - ``pki/issuing-cas/config/<int:pk>/rollover/import-pkcs12/``
+     - ``view``
+     - ``issuing_cas-rollover-import-pkcs12``
+   * - ``pki/issuing-cas/config/<int:pk>/rollover/import-separate-files/``
+     - ``view``
+     - ``issuing_cas-rollover-import-separate-files``
+   * - ``pki/issuing-cas/config/<int:pk>/rollover/method-select/``
+     - ``view``
+     - ``issuing_cas-rollover-method-select``
+   * - ``pki/issuing-cas/config/<int:pk>/rollover/plan/``
+     - ``view``
+     - ``issuing_cas-rollover-plan``
+   * - ``pki/issuing-cas/config/<int:pk>/rollover/request-cmp/``
+     - ``view``
+     - ``issuing_cas-rollover-request-cmp``
+   * - ``pki/issuing-cas/config/<int:pk>/rollover/request-est/``
+     - ``view``
+     - ``issuing_cas-rollover-request-est``
+   * - ``pki/issuing-cas/config/<int:pk>/rollover/request-method-select/``
+     - ``view``
+     - ``issuing_cas-rollover-request-method-select``
    * - ``pki/issuing-cas/crl-gen/<int:pk>/``
      - ``view``
      - ``issuing_cas-crl-gen``
    * - ``pki/issuing-cas/define-cert-content-cmp/<int:pk>/``
      - ``view``
      - ``issuing_cas-define-cert-content-cmp``
+   * - ``pki/issuing-cas/define-cert-content-csr/<int:pk>/``
+     - ``view``
+     - ``issuing_cas-define-cert-content-csr``
    * - ``pki/issuing-cas/define-cert-content-est/<int:pk>/``
      - ``view``
      - ``issuing_cas-define-cert-content-est``
    * - ``pki/issuing-cas/detail/<int:pk>/``
      - ``view``
      - ``issuing_cas-detail``
+   * - ``pki/issuing-cas/external-csr/<int:pk>/``
+     - ``view``
+     - ``issuing_cas-external-csr``
    * - ``pki/issuing-cas/issued-certificates/<int:pk>``
      - ``view``
      - ``issuing_ca-issued_certificates``
@@ -1613,6 +2045,9 @@ Rest Pki
    * - ``api/rest-pki/enroll/``
      - ``view``
      - ``rest-pki-enroll``
+   * - ``api/rest-pki/revoke/``
+     - ``view``
+     - ``rest-pki-revoke``
    * - ``rest/^(?P<domain>[^/]+)/(?P<cert_profile>[^/]+)/enroll/?$``
      - ``view``
      - ``enroll``
@@ -1622,6 +2057,24 @@ Rest Pki
    * - ``rest/^(?P<domain>[^/]+)/enroll/?$``
      - ``view``
      - ``enroll-default-profile``
+
+
+Scep
+^^^^
+
+.. list-table::
+   :header-rows: 1
+   :widths: 40 30 30
+
+   * - URL Pattern
+     - View
+     - Name
+   * - ``.well-known/scep/^(?P<domain>[^/]+)/$``
+     - ``view``
+     - ``endpoint``
+   * - ``.well-known/scep/^(?P<domain>[^/]+)/(?P<cert_profile>[^/]+)/$``
+     - ``view``
+     - ``endpoint-profile``
 
 
 Signer
@@ -1718,9 +2171,6 @@ Trustpoint
    * - ````
      - ``view``
      - ``-``
-   * - ``api/token/``
-     - ``view``
-     - ``token_obtain_pair``
    * - ``api/token/refresh/``
      - ``view``
      - ``token_refresh``
@@ -1739,12 +2189,54 @@ Users
    * - URL Pattern
      - View
      - Name
+   * - ``api/token/``
+     - ``view``
+     - ``token_obtain_pair``
    * - ``users/login/``
      - ``view``
      - ``login``
+   * - ``users/login/otp/``
+     - ``view``
+     - ``otp``
    * - ``users/logout/``
      - ``view``
      - ``logout``
+   * - ``users/password-change-required/``
+     - ``view``
+     - ``password-change-required``
+   * - ``users/profile/``
+     - ``view``
+     - ``profile``
+   * - ``users/profile/<int:pk>/``
+     - ``view``
+     - ``user-profile``
+   * - ``users/profile/<int:pk>/delete/``
+     - ``view``
+     - ``user-profile-delete``
+   * - ``users/profile/<int:pk>/password/``
+     - ``view``
+     - ``user-profile-password``
+   * - ``users/profile/certificate-authentication/``
+     - ``view``
+     - ``profile_certificate_authentication``
+   * - ``users/profile/certificate-authentication/<int:pk>/<str:action>/``
+     - ``view``
+     - ``profile_client_certificate_action``
+   * - ``users/profile/delete/``
+     - ``view``
+     - ``profile_delete``
+   * - ``users/profile/details/``
+     - ``view``
+     - ``profile_details``
+   * - ``users/profile/password/``
+     - ``view``
+     - ``profile_password``
+   * - ``users/profile/reset-otp/``
+     - ``view``
+     - ``profile_reset_otp``
+   * - ``users/profile/role/``
+     - ``view``
+     - ``profile_role``
 
 
 Workflows2

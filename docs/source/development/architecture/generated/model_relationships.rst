@@ -23,6 +23,42 @@ Model Index by Application
 ---------------------------
 
 
+agents
+^^^^^^
+
+**AgentAssignedProfile**
+
+   *Agent Assigned Profile*
+
+   Database table: ``agents_agentassignedprofile``
+
+   Relationships:
+
+   - ``agent`` (ForeignKey) → agents.TrustpointAgent
+   - ``workflow_definition`` (ForeignKey) → agents.AgentProfileDefinition
+
+**AgentProfileDefinition**
+
+   *Agent Profile Definition*
+
+   Database table: ``agents_agentprofiledefinition``
+
+   Relationships:
+
+   - ``assigned_to`` (ManyToOneRel) → agents.AgentAssignedProfile
+
+**TrustpointAgent**
+
+   *Trustpoint Agent*
+
+   Database table: ``agents_trustpointagent``
+
+   Relationships:
+
+   - ``assigned_profiles`` (ManyToOneRel) → agents.AgentAssignedProfile
+   - ``device`` (ForeignKey) → devices.DeviceModel
+
+
 appsecrets
 ^^^^^^^^^^
 
@@ -89,6 +125,7 @@ crypto
    - ``credentialmodel`` (ManyToOneRel) → pki.CredentialModel
    - ``pkcs11_binding`` (OneToOneRel) → crypto.CryptoManagedKeyPkcs11BindingModel
    - ``software_binding`` (OneToOneRel) → crypto.CryptoManagedKeySoftwareBindingModel
+   - ``protected_import_binding`` (OneToOneRel) → crypto.CryptoManagedKeyProtectedImportBindingModel
    - ``rest_binding`` (OneToOneRel) → crypto.CryptoManagedKeyRestBindingModel
    - ``provider_profile`` (ForeignKey) → crypto.CryptoProviderProfileModel
 
@@ -97,6 +134,17 @@ crypto
    *crypto managed key pkcs11 binding model*
 
    Database table: ``crypto_managed_key_pkcs11_binding``
+
+   Relationships:
+
+   - ``managed_key`` (OneToOneField) → crypto.CryptoManagedKeyModel
+   - ``provider_profile`` (ForeignKey) → crypto.CryptoProviderProfileModel
+
+**CryptoManagedKeyProtectedImportBindingModel**
+
+   *crypto managed key protected import binding model*
+
+   Database table: ``crypto_managed_key_protected_import_binding``
 
    Relationships:
 
@@ -192,6 +240,7 @@ crypto
    - ``managed_keys`` (ManyToOneRel) → crypto.CryptoManagedKeyModel
    - ``pkcs11_key_bindings`` (ManyToOneRel) → crypto.CryptoManagedKeyPkcs11BindingModel
    - ``software_key_bindings`` (ManyToOneRel) → crypto.CryptoManagedKeySoftwareBindingModel
+   - ``protected_import_key_bindings`` (ManyToOneRel) → crypto.CryptoManagedKeyProtectedImportBindingModel
    - ``rest_key_bindings`` (ManyToOneRel) → crypto.CryptoManagedKeyRestBindingModel
    - ``capability_snapshots`` (ManyToOneRel) → crypto.CryptoProviderCapabilitySnapshotModel
    - ``current_capability_snapshot`` (ForeignKey) → crypto.CryptoProviderCapabilitySnapshotModel
@@ -233,6 +282,7 @@ devices
    - ``remote_issued_credentials`` (ManyToOneRel) → pki.RemoteIssuedCredentialModel
    - ``cmp_transactions`` (ManyToOneRel) → cmp.CmpTransactionModel
    - ``notifications`` (ManyToOneRel) → management.NotificationModel
+   - ``agents`` (ManyToOneRel) → agents.TrustpointAgent
    - ``domain`` (ForeignKey) → pki.DomainModel
    - ``onboarding_config`` (ForeignKey) → onboarding.OnboardingConfigModel
    - ``no_onboarding_config`` (ForeignKey) → onboarding.NoOnboardingConfigModel
@@ -249,8 +299,34 @@ devices
    - ``device`` (ForeignKey) → devices.DeviceModel
 
 
+discovery
+^^^^^^^^^
+
+**DiscoveredDevice**
+
+   *discovered device*
+
+   Database table: ``discovery_discovereddevice``
+
+   Relationships:
+
+   - ``certificate_record`` (ForeignKey) → pki.CertificateModel
+
+**DiscoveryPort**
+
+   *discovery port*
+
+   Database table: ``discovery_discoveryport``
+
+
 management
 ^^^^^^^^^^
+
+**AccountSecurityConfig**
+
+   *account security configuration*
+
+   Database table: ``management_accountsecurityconfig``
 
 **AppVersion**
 
@@ -267,7 +343,7 @@ management
    Relationships:
 
    - ``target_content_type`` (ForeignKey) → contenttypes.ContentType
-   - ``actor`` (ForeignKey) → auth.User
+   - ``actor`` (ForeignKey) → users.TrustpointUser
 
 **BackupOptions**
 
@@ -275,11 +351,15 @@ management
 
    Database table: ``management_backupoptions``
 
-**InternationalizationConfig**
+**CertificateAuthenticationConfig**
 
-   *internationalization config*
+   *Certificate authentication configuration*
 
-   Database table: ``management_internationalizationconfig``
+   Database table: ``management_certificateauthenticationconfig``
+
+   Relationships:
+
+   - ``issuing_ca`` (OneToOneField) → pki.CaModel
 
 **LoggingConfig**
 
@@ -328,6 +408,23 @@ management
 
    - ``notifications`` (ManyToManyRel) → management.NotificationModel
 
+**OrganizationModel**
+
+   *Organization Model*
+
+   Database table: ``management_organizationmodel``
+
+   Relationships:
+
+   - ``org_users`` (ManyToOneRel) → users.TrustpointUser
+   - ``domains`` (ManyToOneRel) → pki.DomainModel
+
+**PasswordPolicy**
+
+   *Password Policy*
+
+   Database table: ``management_passwordpolicy``
+
 **PrometheusConfig**
 
    *Prometheus Configuration*
@@ -351,12 +448,6 @@ management
    *tls settings*
 
    Database table: ``management_tlssettings``
-
-**UIConfig**
-
-   *ui config*
-
-   Database table: ``management_uiconfig``
 
 **WeakECCCurve**
 
@@ -503,6 +594,9 @@ pki
    - ``remote_issued_credentials`` (ManyToOneRel) → pki.RemoteIssuedCredentialModel
    - ``child_cas`` (ManyToOneRel) → pki.CaModel
    - ``domains`` (ManyToOneRel) → pki.DomainModel
+   - ``rollovers_as_old`` (ManyToOneRel) → pki.CaRolloverModel
+   - ``rollovers_as_new`` (ManyToOneRel) → pki.CaRolloverModel
+   - ``user_authentication_config`` (OneToOneRel) → management.CertificateAuthenticationConfig
    - ``notifications`` (ManyToOneRel) → management.NotificationModel
    - ``parent_ca`` (ForeignKey) → pki.CaModel
    - ``certificate`` (ForeignKey) → pki.CertificateModel
@@ -510,6 +604,18 @@ pki
    - ``chain_truststore`` (OneToOneField) → pki.TruststoreModel
    - ``onboarding_config`` (ForeignKey) → onboarding.OnboardingConfigModel
    - ``no_onboarding_config`` (ForeignKey) → onboarding.NoOnboardingConfigModel
+
+**CaRolloverModel**
+
+   *CA Rollover*
+
+   Database table: ``pki_carollovermodel``
+
+   Relationships:
+
+   - ``old_issuing_ca`` (ForeignKey) → pki.CaModel
+   - ``new_issuing_ca`` (ForeignKey) → pki.CaModel
+   - ``initiated_by`` (ForeignKey) → users.TrustpointUser
 
 **CertificateChainOrderModel**
 
@@ -531,6 +637,7 @@ pki
 
    Relationships:
 
+   - ``user_client_certificate`` (OneToOneRel) → users.UserClientCertificate
    - ``certificatemodel`` (ManyToOneRel) → pki.CertificateModel
    - ``revoked_certificate`` (OneToOneRel) → pki.RevokedCertificateModel
    - ``credential_set`` (ManyToOneRel) → pki.CredentialModel
@@ -545,6 +652,7 @@ pki
    - ``keyless_cas`` (ManyToOneRel) → pki.CaModel
    - ``cmp_transaction_records`` (ManyToOneRel) → cmp.CmpTransactionModel
    - ``notifications`` (ManyToOneRel) → management.NotificationModel
+   - ``discovered_on_devices`` (ManyToOneRel) → discovery.DiscoveredDevice
    - ``issuer_id`` (ForeignKey) → pki.CertificateModel
    - ``key_usage_extension`` (ForeignKey) → pki.KeyUsageExtension
    - ``subject_alternative_name_extension`` (ForeignKey) → pki.SubjectAlternativeNameExtension
@@ -690,8 +798,10 @@ pki
    - ``certificate_profiles`` (ManyToOneRel) → pki.DomainAllowedCertificateProfileModel
    - ``devid_registrations`` (ManyToOneRel) → pki.DevIdRegistration
    - ``cmp_transactions`` (ManyToOneRel) → cmp.CmpTransactionModel
+   - ``scep_config`` (OneToOneRel) → scep.ScepServerConfigModel
    - ``notifications`` (ManyToOneRel) → management.NotificationModel
    - ``issuing_ca`` (ForeignKey) → pki.CaModel
+   - ``organization`` (ForeignKey) → management.OrganizationModel
    - ``domain_credential_profile`` (ForeignKey) → pki.CertificateProfileModel
 
 **ExtendedKeyUsageExtension**
@@ -1128,6 +1238,21 @@ pki
    - ``notice_ref`` (ForeignKey) → pki.NoticeReference
 
 
+scep
+^^^^
+
+**ScepServerConfigModel**
+
+   *scep server config model*
+
+   Database table: ``scep_scepserverconfigmodel``
+
+   Relationships:
+
+   - ``domain`` (OneToOneField) → pki.DomainModel
+   - ``server_credential`` (ForeignKey) → pki.CredentialModel
+
+
 setup_wizard
 ^^^^^^^^^^^^
 
@@ -1167,6 +1292,87 @@ signer
 
    - ``signed_messages`` (ManyToOneRel) → signer.SignedMessageModel
    - ``credential`` (OneToOneField) → pki.CredentialModel
+
+
+users
+^^^^^
+
+**AppPermission**
+
+   *app permission*
+
+   Database table: ``users_apppermission``
+
+**GroupProfile**
+
+   *group profile*
+
+   Database table: ``users_groupprofile``
+
+   Relationships:
+
+   - ``group`` (OneToOneField) → auth.Group
+
+**ServiceAccountCredential**
+
+   *service account credential*
+
+   Database table: ``users_serviceaccountcredential``
+
+   Relationships:
+
+   - ``service_account`` (ForeignKey) → users.TrustpointUser
+
+**TrustpointUser**
+
+   *user*
+
+   Database table: ``users_trustpointuser``
+
+   Relationships:
+
+   - ``service_credentials`` (ManyToOneRel) → users.ServiceAccountCredential
+   - ``client_certificates`` (ManyToOneRel) → users.UserClientCertificate
+   - ``otp_devices`` (ManyToOneRel) → users.UserOTPDevice
+   - ``carollovermodel`` (ManyToOneRel) → pki.CaRolloverModel
+   - ``audit_log_entries`` (ManyToOneRel) → management.AuditLog
+   - ``logentry`` (ManyToOneRel) → admin.LogEntry
+   - ``role`` (ForeignKey) → auth.Group
+   - ``organization`` (ForeignKey) → management.OrganizationModel
+   - ``groups`` (ManyToManyField) → auth.Group
+   - ``user_permissions`` (ManyToManyField) → auth.Permission
+
+**UserClientCertificate**
+
+   *user client certificate*
+
+   Database table: ``users_userclientcertificate``
+
+   Relationships:
+
+   - ``user`` (ForeignKey) → users.TrustpointUser
+   - ``certificate`` (OneToOneField) → pki.CertificateModel
+
+**UserOTPDevice**
+
+   *user otp device*
+
+   Database table: ``users_userotpdevice``
+
+   Relationships:
+
+   - ``recovery_codes`` (ManyToOneRel) → users.UserOTPRecoveryCode
+   - ``user`` (ForeignKey) → users.TrustpointUser
+
+**UserOTPRecoveryCode**
+
+   *user otp recovery code*
+
+   Database table: ``users_userotprecoverycode``
+
+   Relationships:
+
+   - ``device`` (ForeignKey) → users.UserOTPDevice
 
 
 workflows2

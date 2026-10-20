@@ -258,6 +258,351 @@
         "table_name": "setup_wizard_setupwizardconfigmodel"
       }
     },
+    "users": {
+      "GroupProfile": {
+        "fields": [
+          {
+            "name": "id",
+            "type": "BigAutoField"
+          },
+          {
+            "name": "group",
+            "type": "OneToOneField",
+            "related_to": "auth.Group"
+          },
+          {
+            "name": "grants_staff",
+            "type": "BooleanField"
+          },
+          {
+            "name": "grants_superuser",
+            "type": "BooleanField"
+          },
+          {
+            "name": "is_builtin",
+            "type": "BooleanField"
+          },
+          {
+            "name": "is_modification_protected",
+            "type": "BooleanField"
+          },
+          {
+            "name": "is_deletion_protected",
+            "type": "BooleanField"
+          }
+        ],
+        "verbose_name": "group profile",
+        "table_name": "users_groupprofile"
+      },
+      "TrustpointUser": {
+        "fields": [
+          {
+            "name": "service_credentials",
+            "type": "ManyToOneRel",
+            "related_to": "users.ServiceAccountCredential"
+          },
+          {
+            "name": "client_certificates",
+            "type": "ManyToOneRel",
+            "related_to": "users.UserClientCertificate"
+          },
+          {
+            "name": "otp_devices",
+            "type": "ManyToOneRel",
+            "related_to": "users.UserOTPDevice"
+          },
+          {
+            "name": "carollovermodel",
+            "type": "ManyToOneRel",
+            "related_to": "pki.CaRolloverModel"
+          },
+          {
+            "name": "audit_log_entries",
+            "type": "ManyToOneRel",
+            "related_to": "management.AuditLog"
+          },
+          {
+            "name": "logentry",
+            "type": "ManyToOneRel",
+            "related_to": "admin.LogEntry"
+          },
+          {
+            "name": "id",
+            "type": "BigAutoField"
+          },
+          {
+            "name": "password",
+            "type": "CharField"
+          },
+          {
+            "name": "last_login",
+            "type": "DateTimeField"
+          },
+          {
+            "name": "is_superuser",
+            "type": "BooleanField"
+          },
+          {
+            "name": "username",
+            "type": "CharField"
+          },
+          {
+            "name": "first_name",
+            "type": "CharField"
+          },
+          {
+            "name": "last_name",
+            "type": "CharField"
+          },
+          {
+            "name": "email",
+            "type": "EmailField"
+          },
+          {
+            "name": "is_staff",
+            "type": "BooleanField"
+          },
+          {
+            "name": "is_active",
+            "type": "BooleanField"
+          },
+          {
+            "name": "date_joined",
+            "type": "DateTimeField"
+          },
+          {
+            "name": "account_type",
+            "type": "CharField"
+          },
+          {
+            "name": "role",
+            "type": "ForeignKey",
+            "related_to": "auth.Group"
+          },
+          {
+            "name": "organization",
+            "type": "ForeignKey",
+            "related_to": "management.OrganizationModel"
+          },
+          {
+            "name": "language",
+            "type": "CharField"
+          },
+          {
+            "name": "timezone",
+            "type": "CharField"
+          },
+          {
+            "name": "date_format",
+            "type": "CharField"
+          },
+          {
+            "name": "theme",
+            "type": "CharField"
+          },
+          {
+            "name": "view_mode",
+            "type": "CharField"
+          },
+          {
+            "name": "must_change_password",
+            "type": "BooleanField"
+          },
+          {
+            "name": "password_changed_at",
+            "type": "DateTimeField"
+          },
+          {
+            "name": "previous_password",
+            "type": "CharField"
+          },
+          {
+            "name": "failed_login_attempts",
+            "type": "PositiveIntegerField"
+          },
+          {
+            "name": "blocked_by_failed_logins",
+            "type": "BooleanField"
+          },
+          {
+            "name": "groups",
+            "type": "ManyToManyField",
+            "related_to": "auth.Group"
+          },
+          {
+            "name": "user_permissions",
+            "type": "ManyToManyField",
+            "related_to": "auth.Permission"
+          }
+        ],
+        "verbose_name": "user",
+        "table_name": "users_trustpointuser"
+      },
+      "AppPermission": {
+        "fields": [
+          {
+            "name": "id",
+            "type": "BigAutoField"
+          }
+        ],
+        "verbose_name": "app permission",
+        "table_name": "users_apppermission"
+      },
+      "ServiceAccountCredential": {
+        "fields": [
+          {
+            "name": "id",
+            "type": "BigAutoField"
+          },
+          {
+            "name": "service_account",
+            "type": "ForeignKey",
+            "related_to": "users.TrustpointUser"
+          },
+          {
+            "name": "client_id",
+            "type": "CharField"
+          },
+          {
+            "name": "hashed_secret",
+            "type": "CharField"
+          },
+          {
+            "name": "created_at",
+            "type": "DateTimeField"
+          },
+          {
+            "name": "expires_at",
+            "type": "DateTimeField"
+          },
+          {
+            "name": "last_used",
+            "type": "DateTimeField"
+          },
+          {
+            "name": "usage_count",
+            "type": "PositiveIntegerField"
+          },
+          {
+            "name": "is_active",
+            "type": "BooleanField"
+          },
+          {
+            "name": "description",
+            "type": "TextField"
+          }
+        ],
+        "verbose_name": "service account credential",
+        "table_name": "users_serviceaccountcredential"
+      },
+      "UserClientCertificate": {
+        "fields": [
+          {
+            "name": "id",
+            "type": "BigAutoField"
+          },
+          {
+            "name": "identifier",
+            "type": "CharField"
+          },
+          {
+            "name": "is_active",
+            "type": "BooleanField"
+          },
+          {
+            "name": "user",
+            "type": "ForeignKey",
+            "related_to": "users.TrustpointUser"
+          },
+          {
+            "name": "certificate",
+            "type": "OneToOneField",
+            "related_to": "pki.CertificateModel"
+          }
+        ],
+        "verbose_name": "user client certificate",
+        "table_name": "users_userclientcertificate"
+      },
+      "UserOTPDevice": {
+        "fields": [
+          {
+            "name": "recovery_codes",
+            "type": "ManyToOneRel",
+            "related_to": "users.UserOTPRecoveryCode"
+          },
+          {
+            "name": "id",
+            "type": "BigAutoField"
+          },
+          {
+            "name": "throttling_failure_timestamp",
+            "type": "DateTimeField"
+          },
+          {
+            "name": "throttling_failure_count",
+            "type": "PositiveIntegerField"
+          },
+          {
+            "name": "created_at",
+            "type": "DateTimeField"
+          },
+          {
+            "name": "last_used_at",
+            "type": "DateTimeField"
+          },
+          {
+            "name": "user",
+            "type": "ForeignKey",
+            "related_to": "users.TrustpointUser"
+          },
+          {
+            "name": "name",
+            "type": "CharField"
+          },
+          {
+            "name": "key",
+            "type": "EncryptedTextField"
+          },
+          {
+            "name": "confirmed",
+            "type": "BooleanField"
+          },
+          {
+            "name": "last_t",
+            "type": "BigIntegerField"
+          }
+        ],
+        "verbose_name": "user otp device",
+        "table_name": "users_userotpdevice"
+      },
+      "UserOTPRecoveryCode": {
+        "fields": [
+          {
+            "name": "id",
+            "type": "BigAutoField"
+          },
+          {
+            "name": "device",
+            "type": "ForeignKey",
+            "related_to": "users.UserOTPDevice"
+          },
+          {
+            "name": "code_hash",
+            "type": "CharField"
+          },
+          {
+            "name": "created_at",
+            "type": "DateTimeField"
+          },
+          {
+            "name": "used_at",
+            "type": "DateTimeField"
+          }
+        ],
+        "verbose_name": "user otp recovery code",
+        "table_name": "users_userotprecoverycode"
+      }
+    },
     "devices": {
       "DeviceModel": {
         "fields": [
@@ -285,6 +630,11 @@
             "name": "notifications",
             "type": "ManyToOneRel",
             "related_to": "management.NotificationModel"
+          },
+          {
+            "name": "agents",
+            "type": "ManyToOneRel",
+            "related_to": "agents.TrustpointAgent"
           },
           {
             "name": "id",
@@ -409,6 +759,26 @@
             "type": "BigAutoField"
           },
           {
+            "name": "scep_challenge",
+            "type": "EncryptedCharField"
+          },
+          {
+            "name": "scep_challenge_digest",
+            "type": "CharField"
+          },
+          {
+            "name": "scep_challenge_expires_at",
+            "type": "DateTimeField"
+          },
+          {
+            "name": "scep_challenge_consumed_at",
+            "type": "DateTimeField"
+          },
+          {
+            "name": "scep_transactions",
+            "type": "JSONField"
+          },
+          {
             "name": "pki_protocols",
             "type": "PositiveIntegerField"
           },
@@ -427,6 +797,10 @@
           {
             "name": "cmp_shared_secret",
             "type": "EncryptedCharField"
+          },
+          {
+            "name": "credential_expires_at",
+            "type": "DateTimeField"
           },
           {
             "name": "opc_user",
@@ -475,6 +849,26 @@
           {
             "name": "id",
             "type": "BigAutoField"
+          },
+          {
+            "name": "scep_challenge",
+            "type": "EncryptedCharField"
+          },
+          {
+            "name": "scep_challenge_digest",
+            "type": "CharField"
+          },
+          {
+            "name": "scep_challenge_expires_at",
+            "type": "DateTimeField"
+          },
+          {
+            "name": "scep_challenge_consumed_at",
+            "type": "DateTimeField"
+          },
+          {
+            "name": "scep_transactions",
+            "type": "JSONField"
           },
           {
             "name": "pki_protocols",
@@ -1596,6 +1990,11 @@
       "CertificateModel": {
         "fields": [
           {
+            "name": "user_client_certificate",
+            "type": "OneToOneRel",
+            "related_to": "users.UserClientCertificate"
+          },
+          {
             "name": "certificatemodel",
             "type": "ManyToOneRel",
             "related_to": "pki.CertificateModel"
@@ -1664,6 +2063,11 @@
             "name": "notifications",
             "type": "ManyToOneRel",
             "related_to": "management.NotificationModel"
+          },
+          {
+            "name": "discovered_on_devices",
+            "type": "ManyToOneRel",
+            "related_to": "discovery.DiscoveredDevice"
           },
           {
             "name": "id",
@@ -2366,6 +2770,21 @@
             "related_to": "pki.DomainModel"
           },
           {
+            "name": "rollovers_as_old",
+            "type": "ManyToOneRel",
+            "related_to": "pki.CaRolloverModel"
+          },
+          {
+            "name": "rollovers_as_new",
+            "type": "ManyToOneRel",
+            "related_to": "pki.CaRolloverModel"
+          },
+          {
+            "name": "user_authentication_config",
+            "type": "OneToOneRel",
+            "related_to": "management.CertificateAuthenticationConfig"
+          },
+          {
             "name": "notifications",
             "type": "ManyToOneRel",
             "related_to": "management.NotificationModel"
@@ -2429,6 +2848,10 @@
           {
             "name": "est_username",
             "type": "CharField"
+          },
+          {
+            "name": "cmp_sender_kid",
+            "type": "PositiveIntegerField"
           },
           {
             "name": "onboarding_config",
@@ -2545,6 +2968,11 @@
             "related_to": "cmp.CmpTransactionModel"
           },
           {
+            "name": "scep_config",
+            "type": "OneToOneRel",
+            "related_to": "scep.ScepServerConfigModel"
+          },
+          {
             "name": "notifications",
             "type": "ManyToOneRel",
             "related_to": "management.NotificationModel"
@@ -2561,6 +2989,11 @@
             "name": "issuing_ca",
             "type": "ForeignKey",
             "related_to": "pki.CaModel"
+          },
+          {
+            "name": "organization",
+            "type": "ForeignKey",
+            "related_to": "management.OrganizationModel"
           },
           {
             "name": "domain_credential_profile",
@@ -2634,6 +3067,59 @@
         ],
         "verbose_name": "dev id registration",
         "table_name": "pki_devidregistration"
+      },
+      "CaRolloverModel": {
+        "fields": [
+          {
+            "name": "id",
+            "type": "BigAutoField"
+          },
+          {
+            "name": "old_issuing_ca",
+            "type": "ForeignKey",
+            "related_to": "pki.CaModel"
+          },
+          {
+            "name": "new_issuing_ca",
+            "type": "ForeignKey",
+            "related_to": "pki.CaModel"
+          },
+          {
+            "name": "state",
+            "type": "CharField"
+          },
+          {
+            "name": "strategy_type",
+            "type": "CharField"
+          },
+          {
+            "name": "planned_at",
+            "type": "DateTimeField"
+          },
+          {
+            "name": "started_at",
+            "type": "DateTimeField"
+          },
+          {
+            "name": "completed_at",
+            "type": "DateTimeField"
+          },
+          {
+            "name": "transition_scheduled_at",
+            "type": "DateTimeField"
+          },
+          {
+            "name": "initiated_by",
+            "type": "ForeignKey",
+            "related_to": "users.TrustpointUser"
+          },
+          {
+            "name": "notes",
+            "type": "TextField"
+          }
+        ],
+        "verbose_name": "CA Rollover",
+        "table_name": "pki_carollovermodel"
       }
     },
     "cmp": {
@@ -2674,6 +3160,14 @@
           {
             "name": "implicit_confirm",
             "type": "BooleanField"
+          },
+          {
+            "name": "last_client_nonce",
+            "type": "BinaryField"
+          },
+          {
+            "name": "last_server_nonce",
+            "type": "BinaryField"
           },
           {
             "name": "device",
@@ -2730,6 +3224,28 @@
         ],
         "verbose_name": "cmp transaction model",
         "table_name": "cmp_cmptransactionmodel"
+      }
+    },
+    "scep": {
+      "ScepServerConfigModel": {
+        "fields": [
+          {
+            "name": "id",
+            "type": "BigAutoField"
+          },
+          {
+            "name": "domain",
+            "type": "OneToOneField",
+            "related_to": "pki.DomainModel"
+          },
+          {
+            "name": "server_credential",
+            "type": "ForeignKey",
+            "related_to": "pki.CredentialModel"
+          }
+        ],
+        "verbose_name": "scep server config model",
+        "table_name": "scep_scepserverconfigmodel"
       }
     },
     "signer": {
@@ -2831,6 +3347,11 @@
             "related_to": "crypto.CryptoManagedKeySoftwareBindingModel"
           },
           {
+            "name": "protected_import_key_bindings",
+            "type": "ManyToOneRel",
+            "related_to": "crypto.CryptoManagedKeyProtectedImportBindingModel"
+          },
+          {
             "name": "rest_key_bindings",
             "type": "ManyToOneRel",
             "related_to": "crypto.CryptoManagedKeyRestBindingModel"
@@ -2894,6 +3415,14 @@
           },
           {
             "name": "module_path",
+            "type": "TextField"
+          },
+          {
+            "name": "provider_config_env_var",
+            "type": "CharField"
+          },
+          {
+            "name": "provider_config_path",
             "type": "TextField"
           },
           {
@@ -3004,6 +3533,11 @@
             "related_to": "crypto.CryptoManagedKeySoftwareBindingModel"
           },
           {
+            "name": "protected_import_binding",
+            "type": "OneToOneRel",
+            "related_to": "crypto.CryptoManagedKeyProtectedImportBindingModel"
+          },
+          {
             "name": "rest_binding",
             "type": "OneToOneRel",
             "related_to": "crypto.CryptoManagedKeyRestBindingModel"
@@ -3112,6 +3646,34 @@
         ],
         "verbose_name": "crypto managed key software binding model",
         "table_name": "crypto_managed_key_software_binding"
+      },
+      "CryptoManagedKeyProtectedImportBindingModel": {
+        "fields": [
+          {
+            "name": "managed_key",
+            "type": "OneToOneField",
+            "related_to": "crypto.CryptoManagedKeyModel"
+          },
+          {
+            "name": "provider_profile",
+            "type": "ForeignKey",
+            "related_to": "crypto.CryptoProviderProfileModel"
+          },
+          {
+            "name": "key_handle",
+            "type": "CharField"
+          },
+          {
+            "name": "encrypted_private_key_pkcs8_der_b64",
+            "type": "TextField"
+          },
+          {
+            "name": "encryption_metadata",
+            "type": "JSONField"
+          }
+        ],
+        "verbose_name": "crypto managed key protected import binding model",
+        "table_name": "crypto_managed_key_protected_import_binding"
       },
       "CryptoManagedKeyRestBindingModel": {
         "fields": [
@@ -3250,6 +3812,28 @@
       }
     },
     "management": {
+      "AccountSecurityConfig": {
+        "fields": [
+          {
+            "name": "id",
+            "type": "BigAutoField"
+          },
+          {
+            "name": "api_credential_expiry_days",
+            "type": "PositiveIntegerField"
+          },
+          {
+            "name": "idle_timeout_minutes",
+            "type": "PositiveIntegerField"
+          },
+          {
+            "name": "failed_login_attempts",
+            "type": "PositiveIntegerField"
+          }
+        ],
+        "verbose_name": "account security configuration",
+        "table_name": "management_accountsecurityconfig"
+      },
       "AppVersion": {
         "fields": [
           {
@@ -3302,7 +3886,7 @@
           {
             "name": "actor",
             "type": "ForeignKey",
-            "related_to": "auth.User"
+            "related_to": "users.TrustpointUser"
           },
           {
             "name": "details",
@@ -3362,6 +3946,25 @@
         "verbose_name": "Backup Option",
         "table_name": "management_backupoptions"
       },
+      "CertificateAuthenticationConfig": {
+        "fields": [
+          {
+            "name": "id",
+            "type": "BigAutoField"
+          },
+          {
+            "name": "issuing_ca",
+            "type": "OneToOneField",
+            "related_to": "pki.CaModel"
+          },
+          {
+            "name": "enabled",
+            "type": "BooleanField"
+          }
+        ],
+        "verbose_name": "Certificate authentication configuration",
+        "table_name": "management_certificateauthenticationconfig"
+      },
       "SmtpEmailConfig": {
         "fields": [
           {
@@ -3411,32 +4014,6 @@
         ],
         "verbose_name": "SMTP Email Configuration",
         "table_name": "management_smtpemailconfig"
-      },
-      "InternationalizationConfig": {
-        "fields": [
-          {
-            "name": "id",
-            "type": "BigAutoField"
-          },
-          {
-            "name": "date_format",
-            "type": "CharField"
-          },
-          {
-            "name": "language",
-            "type": "CharField"
-          },
-          {
-            "name": "timezone",
-            "type": "CharField"
-          },
-          {
-            "name": "last_updated",
-            "type": "DateTimeField"
-          }
-        ],
-        "verbose_name": "internationalization config",
-        "table_name": "management_internationalizationconfig"
       },
       "LoggingConfig": {
         "fields": [
@@ -3632,6 +4209,112 @@
         "verbose_name": "Notification Configuration",
         "table_name": "management_notificationconfig"
       },
+      "OrganizationModel": {
+        "fields": [
+          {
+            "name": "org_users",
+            "type": "ManyToOneRel",
+            "related_to": "users.TrustpointUser"
+          },
+          {
+            "name": "domains",
+            "type": "ManyToOneRel",
+            "related_to": "pki.DomainModel"
+          },
+          {
+            "name": "id",
+            "type": "BigAutoField"
+          },
+          {
+            "name": "name",
+            "type": "CharField"
+          },
+          {
+            "name": "organization",
+            "type": "CharField"
+          },
+          {
+            "name": "organization_unit",
+            "type": "CharField"
+          },
+          {
+            "name": "country",
+            "type": "CharField"
+          },
+          {
+            "name": "state",
+            "type": "CharField"
+          },
+          {
+            "name": "locality",
+            "type": "CharField"
+          },
+          {
+            "name": "created_at",
+            "type": "DateTimeField"
+          },
+          {
+            "name": "updated_at",
+            "type": "DateTimeField"
+          }
+        ],
+        "verbose_name": "Organization Model",
+        "table_name": "management_organizationmodel"
+      },
+      "PasswordPolicy": {
+        "fields": [
+          {
+            "name": "id",
+            "type": "BigAutoField"
+          },
+          {
+            "name": "require_otp",
+            "type": "BooleanField"
+          },
+          {
+            "name": "minimum_length",
+            "type": "PositiveIntegerField"
+          },
+          {
+            "name": "prevent_password_reuse",
+            "type": "BooleanField"
+          },
+          {
+            "name": "password_expiry_days",
+            "type": "PositiveIntegerField"
+          },
+          {
+            "name": "user_similarity_enabled",
+            "type": "BooleanField"
+          },
+          {
+            "name": "max_similarity",
+            "type": "FloatField"
+          },
+          {
+            "name": "reject_common_passwords",
+            "type": "BooleanField"
+          },
+          {
+            "name": "common_password_list_data",
+            "type": "BinaryField"
+          },
+          {
+            "name": "common_password_list_name",
+            "type": "CharField"
+          },
+          {
+            "name": "reject_numeric_passwords",
+            "type": "BooleanField"
+          },
+          {
+            "name": "last_updated",
+            "type": "DateTimeField"
+          }
+        ],
+        "verbose_name": "Password Policy",
+        "table_name": "management_passwordpolicy"
+      },
       "PrometheusConfig": {
         "fields": [
           {
@@ -3673,6 +4356,10 @@
             "type": "JSONField"
           },
           {
+            "name": "not_permitted_mldsa_variant_oids",
+            "type": "JSONField"
+          },
+          {
             "name": "not_permitted_signature_algorithm_oids",
             "type": "JSONField"
           },
@@ -3682,6 +4369,10 @@
           },
           {
             "name": "max_crl_validity_days",
+            "type": "PositiveIntegerField"
+          },
+          {
+            "name": "credential_ttl_seconds",
             "type": "PositiveIntegerField"
           },
           {
@@ -3695,6 +4386,14 @@
           {
             "name": "allow_self_signed_ca",
             "type": "BooleanField"
+          },
+          {
+            "name": "allow_imported_private_keys",
+            "type": "BooleanField"
+          },
+          {
+            "name": "permitted_cmp_hmac_algorithms",
+            "type": "JSONField"
           },
           {
             "name": "permitted_no_onboarding_pki_protocols",
@@ -3722,24 +4421,6 @@
         "verbose_name": "tls settings",
         "table_name": "management_tlssettings"
       },
-      "UIConfig": {
-        "fields": [
-          {
-            "name": "id",
-            "type": "BigAutoField"
-          },
-          {
-            "name": "view_mode",
-            "type": "CharField"
-          },
-          {
-            "name": "last_updated",
-            "type": "DateTimeField"
-          }
-        ],
-        "verbose_name": "ui config",
-        "table_name": "management_uiconfig"
-      },
       "WorkflowExecutionConfig": {
         "fields": [
           {
@@ -3761,6 +4442,214 @@
         ],
         "verbose_name": "workflow execution config",
         "table_name": "management_workflowexecutionconfig"
+      }
+    },
+    "agents": {
+      "TrustpointAgent": {
+        "fields": [
+          {
+            "name": "assigned_profiles",
+            "type": "ManyToOneRel",
+            "related_to": "agents.AgentAssignedProfile"
+          },
+          {
+            "name": "id",
+            "type": "BigAutoField"
+          },
+          {
+            "name": "name",
+            "type": "CharField"
+          },
+          {
+            "name": "agent_id",
+            "type": "CharField"
+          },
+          {
+            "name": "device",
+            "type": "ForeignKey",
+            "related_to": "devices.DeviceModel"
+          },
+          {
+            "name": "capabilities",
+            "type": "JSONField"
+          },
+          {
+            "name": "cell_location",
+            "type": "CharField"
+          },
+          {
+            "name": "is_active",
+            "type": "BooleanField"
+          },
+          {
+            "name": "poll_interval_seconds",
+            "type": "PositiveIntegerField"
+          },
+          {
+            "name": "os_path",
+            "type": "CharField"
+          },
+          {
+            "name": "last_seen_at",
+            "type": "DateTimeField"
+          },
+          {
+            "name": "created_at",
+            "type": "DateTimeField"
+          },
+          {
+            "name": "updated_at",
+            "type": "DateTimeField"
+          }
+        ],
+        "verbose_name": "Trustpoint Agent",
+        "table_name": "agents_trustpointagent"
+      },
+      "AgentProfileDefinition": {
+        "fields": [
+          {
+            "name": "assigned_to",
+            "type": "ManyToOneRel",
+            "related_to": "agents.AgentAssignedProfile"
+          },
+          {
+            "name": "id",
+            "type": "BigAutoField"
+          },
+          {
+            "name": "name",
+            "type": "CharField"
+          },
+          {
+            "name": "profile",
+            "type": "JSONField"
+          },
+          {
+            "name": "is_active",
+            "type": "BooleanField"
+          },
+          {
+            "name": "created_at",
+            "type": "DateTimeField"
+          },
+          {
+            "name": "updated_at",
+            "type": "DateTimeField"
+          }
+        ],
+        "verbose_name": "Agent Profile Definition",
+        "table_name": "agents_agentprofiledefinition"
+      },
+      "AgentAssignedProfile": {
+        "fields": [
+          {
+            "name": "id",
+            "type": "BigAutoField"
+          },
+          {
+            "name": "agent",
+            "type": "ForeignKey",
+            "related_to": "agents.TrustpointAgent"
+          },
+          {
+            "name": "workflow_definition",
+            "type": "ForeignKey",
+            "related_to": "agents.AgentProfileDefinition"
+          },
+          {
+            "name": "renewal_threshold_days",
+            "type": "PositiveIntegerField"
+          },
+          {
+            "name": "subject",
+            "type": "CharField"
+          },
+          {
+            "name": "subject_alt_name",
+            "type": "CharField"
+          },
+          {
+            "name": "last_certificate_update",
+            "type": "DateTimeField"
+          },
+          {
+            "name": "next_certificate_update_scheduled",
+            "type": "DateTimeField"
+          },
+          {
+            "name": "enabled",
+            "type": "BooleanField"
+          },
+          {
+            "name": "created_at",
+            "type": "DateTimeField"
+          },
+          {
+            "name": "updated_at",
+            "type": "DateTimeField"
+          }
+        ],
+        "verbose_name": "Agent Assigned Profile",
+        "table_name": "agents_agentassignedprofile"
+      }
+    },
+    "discovery": {
+      "DiscoveryPort": {
+        "fields": [
+          {
+            "name": "id",
+            "type": "BigAutoField"
+          },
+          {
+            "name": "port_number",
+            "type": "PositiveIntegerField"
+          },
+          {
+            "name": "description",
+            "type": "CharField"
+          }
+        ],
+        "verbose_name": "discovery port",
+        "table_name": "discovery_discoveryport"
+      },
+      "DiscoveredDevice": {
+        "fields": [
+          {
+            "name": "id",
+            "type": "BigAutoField"
+          },
+          {
+            "name": "ip_address",
+            "type": "GenericIPAddressField"
+          },
+          {
+            "name": "hostname",
+            "type": "CharField"
+          },
+          {
+            "name": "open_ports",
+            "type": "JSONField"
+          },
+          {
+            "name": "ssl_info",
+            "type": "JSONField"
+          },
+          {
+            "name": "certificate_record",
+            "type": "ForeignKey",
+            "related_to": "pki.CertificateModel"
+          },
+          {
+            "name": "last_seen",
+            "type": "DateTimeField"
+          },
+          {
+            "name": "created_at",
+            "type": "DateTimeField"
+          }
+        ],
+        "verbose_name": "discovered device",
+        "table_name": "discovery_discovereddevice"
       }
     },
     "workflows2": {
@@ -4201,6 +5090,98 @@
         "name": "view_on_site"
       },
       {
+        "pattern": "admin/auth/group/",
+        "view": "django.contrib.admin.options.changelist_view",
+        "name": "auth_group_changelist"
+      },
+      {
+        "pattern": "admin/auth/group/add/",
+        "view": "django.contrib.admin.options.add_view",
+        "name": "auth_group_add"
+      },
+      {
+        "pattern": "admin/auth/group/<path:object_id>/history/",
+        "view": "django.contrib.admin.options.history_view",
+        "name": "auth_group_history"
+      },
+      {
+        "pattern": "admin/auth/group/<path:object_id>/delete/",
+        "view": "django.contrib.admin.options.delete_view",
+        "name": "auth_group_delete"
+      },
+      {
+        "pattern": "admin/auth/group/<path:object_id>/change/",
+        "view": "django.contrib.admin.options.change_view",
+        "name": "auth_group_change"
+      },
+      {
+        "pattern": "admin/auth/group/<path:object_id>/",
+        "view": "django.views.generic.base.view"
+      },
+      {
+        "pattern": "admin/users/trustpointuser/<id>/password/",
+        "view": "django.contrib.auth.admin.user_change_password",
+        "name": "auth_user_password_change"
+      },
+      {
+        "pattern": "admin/users/trustpointuser/",
+        "view": "django.contrib.admin.options.changelist_view",
+        "name": "users_trustpointuser_changelist"
+      },
+      {
+        "pattern": "admin/users/trustpointuser/add/",
+        "view": "django.contrib.auth.admin.add_view",
+        "name": "users_trustpointuser_add"
+      },
+      {
+        "pattern": "admin/users/trustpointuser/<path:object_id>/history/",
+        "view": "django.contrib.admin.options.history_view",
+        "name": "users_trustpointuser_history"
+      },
+      {
+        "pattern": "admin/users/trustpointuser/<path:object_id>/delete/",
+        "view": "django.contrib.admin.options.delete_view",
+        "name": "users_trustpointuser_delete"
+      },
+      {
+        "pattern": "admin/users/trustpointuser/<path:object_id>/change/",
+        "view": "django.contrib.admin.options.change_view",
+        "name": "users_trustpointuser_change"
+      },
+      {
+        "pattern": "admin/users/trustpointuser/<path:object_id>/",
+        "view": "django.views.generic.base.view"
+      },
+      {
+        "pattern": "admin/users/serviceaccountcredential/",
+        "view": "django.contrib.admin.options.changelist_view",
+        "name": "users_serviceaccountcredential_changelist"
+      },
+      {
+        "pattern": "admin/users/serviceaccountcredential/add/",
+        "view": "django.contrib.admin.options.add_view",
+        "name": "users_serviceaccountcredential_add"
+      },
+      {
+        "pattern": "admin/users/serviceaccountcredential/<path:object_id>/history/",
+        "view": "django.contrib.admin.options.history_view",
+        "name": "users_serviceaccountcredential_history"
+      },
+      {
+        "pattern": "admin/users/serviceaccountcredential/<path:object_id>/delete/",
+        "view": "django.contrib.admin.options.delete_view",
+        "name": "users_serviceaccountcredential_delete"
+      },
+      {
+        "pattern": "admin/users/serviceaccountcredential/<path:object_id>/change/",
+        "view": "django.contrib.admin.options.change_view",
+        "name": "users_serviceaccountcredential_change"
+      },
+      {
+        "pattern": "admin/users/serviceaccountcredential/<path:object_id>/",
+        "view": "django.views.generic.base.view"
+      },
+      {
         "pattern": "admin/devices/devicemodel/",
         "view": "django.contrib.admin.options.changelist_view",
         "name": "devices_devicemodel_changelist"
@@ -4520,6 +5501,35 @@
         "view": "django.views.generic.base.view"
       },
       {
+        "pattern": "admin/pki/carollovermodel/",
+        "view": "django.contrib.admin.options.changelist_view",
+        "name": "pki_carollovermodel_changelist"
+      },
+      {
+        "pattern": "admin/pki/carollovermodel/add/",
+        "view": "django.contrib.admin.options.add_view",
+        "name": "pki_carollovermodel_add"
+      },
+      {
+        "pattern": "admin/pki/carollovermodel/<path:object_id>/history/",
+        "view": "django.contrib.admin.options.history_view",
+        "name": "pki_carollovermodel_history"
+      },
+      {
+        "pattern": "admin/pki/carollovermodel/<path:object_id>/delete/",
+        "view": "django.contrib.admin.options.delete_view",
+        "name": "pki_carollovermodel_delete"
+      },
+      {
+        "pattern": "admin/pki/carollovermodel/<path:object_id>/change/",
+        "view": "django.contrib.admin.options.change_view",
+        "name": "pki_carollovermodel_change"
+      },
+      {
+        "pattern": "admin/pki/carollovermodel/<path:object_id>/",
+        "view": "django.views.generic.base.view"
+      },
+      {
         "pattern": "admin/signer/signermodel/",
         "view": "django.contrib.admin.options.changelist_view",
         "name": "signer_signermodel_changelist"
@@ -4578,66 +5588,119 @@
         "view": "django.views.generic.base.view"
       },
       {
-        "pattern": "admin/auth/group/",
+        "pattern": "admin/agents/trustpointagent/",
         "view": "django.contrib.admin.options.changelist_view",
-        "name": "auth_group_changelist"
+        "name": "agents_trustpointagent_changelist"
       },
       {
-        "pattern": "admin/auth/group/add/",
+        "pattern": "admin/agents/trustpointagent/add/",
         "view": "django.contrib.admin.options.add_view",
-        "name": "auth_group_add"
+        "name": "agents_trustpointagent_add"
       },
       {
-        "pattern": "admin/auth/group/<path:object_id>/history/",
+        "pattern": "admin/agents/trustpointagent/<path:object_id>/history/",
         "view": "django.contrib.admin.options.history_view",
-        "name": "auth_group_history"
+        "name": "agents_trustpointagent_history"
       },
       {
-        "pattern": "admin/auth/group/<path:object_id>/delete/",
+        "pattern": "admin/agents/trustpointagent/<path:object_id>/delete/",
         "view": "django.contrib.admin.options.delete_view",
-        "name": "auth_group_delete"
+        "name": "agents_trustpointagent_delete"
       },
       {
-        "pattern": "admin/auth/group/<path:object_id>/change/",
+        "pattern": "admin/agents/trustpointagent/<path:object_id>/change/",
         "view": "django.contrib.admin.options.change_view",
-        "name": "auth_group_change"
+        "name": "agents_trustpointagent_change"
       },
       {
-        "pattern": "admin/auth/group/<path:object_id>/",
+        "pattern": "admin/agents/trustpointagent/<path:object_id>/",
         "view": "django.views.generic.base.view"
       },
       {
-        "pattern": "admin/auth/user/<id>/password/",
-        "view": "django.contrib.auth.admin.user_change_password",
-        "name": "auth_user_password_change"
-      },
-      {
-        "pattern": "admin/auth/user/",
+        "pattern": "admin/agents/agentprofiledefinition/",
         "view": "django.contrib.admin.options.changelist_view",
-        "name": "auth_user_changelist"
+        "name": "agents_agentprofiledefinition_changelist"
       },
       {
-        "pattern": "admin/auth/user/add/",
-        "view": "django.contrib.auth.admin.add_view",
-        "name": "auth_user_add"
+        "pattern": "admin/agents/agentprofiledefinition/add/",
+        "view": "django.contrib.admin.options.add_view",
+        "name": "agents_agentprofiledefinition_add"
       },
       {
-        "pattern": "admin/auth/user/<path:object_id>/history/",
+        "pattern": "admin/agents/agentprofiledefinition/<path:object_id>/history/",
         "view": "django.contrib.admin.options.history_view",
-        "name": "auth_user_history"
+        "name": "agents_agentprofiledefinition_history"
       },
       {
-        "pattern": "admin/auth/user/<path:object_id>/delete/",
+        "pattern": "admin/agents/agentprofiledefinition/<path:object_id>/delete/",
         "view": "django.contrib.admin.options.delete_view",
-        "name": "auth_user_delete"
+        "name": "agents_agentprofiledefinition_delete"
       },
       {
-        "pattern": "admin/auth/user/<path:object_id>/change/",
+        "pattern": "admin/agents/agentprofiledefinition/<path:object_id>/change/",
         "view": "django.contrib.admin.options.change_view",
-        "name": "auth_user_change"
+        "name": "agents_agentprofiledefinition_change"
       },
       {
-        "pattern": "admin/auth/user/<path:object_id>/",
+        "pattern": "admin/agents/agentprofiledefinition/<path:object_id>/",
+        "view": "django.views.generic.base.view"
+      },
+      {
+        "pattern": "admin/agents/agentassignedprofile/",
+        "view": "django.contrib.admin.options.changelist_view",
+        "name": "agents_agentassignedprofile_changelist"
+      },
+      {
+        "pattern": "admin/agents/agentassignedprofile/add/",
+        "view": "django.contrib.admin.options.add_view",
+        "name": "agents_agentassignedprofile_add"
+      },
+      {
+        "pattern": "admin/agents/agentassignedprofile/<path:object_id>/history/",
+        "view": "django.contrib.admin.options.history_view",
+        "name": "agents_agentassignedprofile_history"
+      },
+      {
+        "pattern": "admin/agents/agentassignedprofile/<path:object_id>/delete/",
+        "view": "django.contrib.admin.options.delete_view",
+        "name": "agents_agentassignedprofile_delete"
+      },
+      {
+        "pattern": "admin/agents/agentassignedprofile/<path:object_id>/change/",
+        "view": "django.contrib.admin.options.change_view",
+        "name": "agents_agentassignedprofile_change"
+      },
+      {
+        "pattern": "admin/agents/agentassignedprofile/<path:object_id>/",
+        "view": "django.views.generic.base.view"
+      },
+      {
+        "pattern": "admin/discovery/discoveryport/",
+        "view": "django.contrib.admin.options.changelist_view",
+        "name": "discovery_discoveryport_changelist"
+      },
+      {
+        "pattern": "admin/discovery/discoveryport/add/",
+        "view": "django.contrib.admin.options.add_view",
+        "name": "discovery_discoveryport_add"
+      },
+      {
+        "pattern": "admin/discovery/discoveryport/<path:object_id>/history/",
+        "view": "django.contrib.admin.options.history_view",
+        "name": "discovery_discoveryport_history"
+      },
+      {
+        "pattern": "admin/discovery/discoveryport/<path:object_id>/delete/",
+        "view": "django.contrib.admin.options.delete_view",
+        "name": "discovery_discoveryport_delete"
+      },
+      {
+        "pattern": "admin/discovery/discoveryport/<path:object_id>/change/",
+        "view": "django.contrib.admin.options.change_view",
+        "name": "discovery_discoveryport_change"
+      },
+      {
+        "pattern": "admin/discovery/discoveryport/<path:object_id>/",
         "view": "django.views.generic.base.view"
       },
       {
@@ -4989,7 +6052,7 @@
         "view": "django.views.generic.base.view"
       },
       {
-        "pattern": "admin/^(?P<app_label>devices|onboarding|pki|signer|auth|django_q|workflows2)/$",
+        "pattern": "admin/^(?P<app_label>auth|users|devices|onboarding|pki|signer|agents|discovery|django_q|workflows2)/$",
         "view": "django.contrib.admin.sites.app_index",
         "name": "app_list"
       },
@@ -5002,14 +6065,79 @@
         "view": "django.views.static.serve"
       },
       {
+        "pattern": "users/profile/",
+        "view": "users.views.view",
+        "name": "profile"
+      },
+      {
+        "pattern": "users/profile/details/",
+        "view": "users.views.view",
+        "name": "profile_details"
+      },
+      {
+        "pattern": "users/profile/role/",
+        "view": "users.views.view",
+        "name": "profile_role"
+      },
+      {
+        "pattern": "users/profile/password/",
+        "view": "users.views.view",
+        "name": "profile_password"
+      },
+      {
+        "pattern": "users/profile/delete/",
+        "view": "users.views.view",
+        "name": "profile_delete"
+      },
+      {
+        "pattern": "users/profile/<int:pk>/delete/",
+        "view": "users.views.view",
+        "name": "user-profile-delete"
+      },
+      {
+        "pattern": "users/profile/<int:pk>/password/",
+        "view": "users.views.view",
+        "name": "user-profile-password"
+      },
+      {
+        "pattern": "users/profile/reset-otp/",
+        "view": "users.views.view",
+        "name": "profile_reset_otp"
+      },
+      {
+        "pattern": "users/profile/certificate-authentication/",
+        "view": "users.views.view",
+        "name": "profile_certificate_authentication"
+      },
+      {
+        "pattern": "users/profile/certificate-authentication/<int:pk>/<str:action>/",
+        "view": "users.views.view",
+        "name": "profile_client_certificate_action"
+      },
+      {
         "pattern": "users/login/",
         "view": "users.views.view",
         "name": "login"
       },
       {
+        "pattern": "users/profile/<int:pk>/",
+        "view": "users.views.view",
+        "name": "user-profile"
+      },
+      {
+        "pattern": "users/password-change-required/",
+        "view": "users.views.view",
+        "name": "password-change-required"
+      },
+      {
         "pattern": "users/logout/",
         "view": "django.contrib.auth.views.view",
         "name": "logout"
+      },
+      {
+        "pattern": "users/login/otp/",
+        "view": "users.views.view",
+        "name": "otp"
       },
       {
         "pattern": "signer/",
@@ -5207,6 +6335,11 @@
         "name": "issuing_cas-add-method_select"
       },
       {
+        "pattern": "pki/issuing-cas/add/autogen/",
+        "view": "pki.views.issuing_cas.view",
+        "name": "issuing_cas-add-autogen"
+      },
+      {
         "pattern": "pki/issuing-cas/add/file-import/pkcs12",
         "view": "pki.views.issuing_cas.view",
         "name": "issuing_cas-add-file_import-pkcs12"
@@ -5225,6 +6358,11 @@
         "pattern": "pki/issuing-cas/add/request-cmp/",
         "view": "pki.views.issuing_cas.view",
         "name": "issuing_cas-add-request-cmp"
+      },
+      {
+        "pattern": "pki/issuing-cas/add/request-external-csr/",
+        "view": "pki.views.issuing_cas.view",
+        "name": "issuing_cas-add-request-external-csr"
       },
       {
         "pattern": "pki/issuing-cas/add/cmp-ra/",
@@ -5252,9 +6390,79 @@
         "name": "issuing_cas-config"
       },
       {
+        "pattern": "pki/issuing-cas/config/<int:pk>/rollover/method-select/",
+        "view": "pki.views.ca_rollover.view",
+        "name": "issuing_cas-rollover-method-select"
+      },
+      {
+        "pattern": "pki/issuing-cas/config/<int:pk>/rollover/file-method-select/",
+        "view": "pki.views.ca_rollover.view",
+        "name": "issuing_cas-rollover-file-method-select"
+      },
+      {
+        "pattern": "pki/issuing-cas/config/<int:pk>/rollover/request-method-select/",
+        "view": "pki.views.ca_rollover.view",
+        "name": "issuing_cas-rollover-request-method-select"
+      },
+      {
+        "pattern": "pki/issuing-cas/config/<int:pk>/rollover/import-pkcs12/",
+        "view": "pki.views.ca_rollover.view",
+        "name": "issuing_cas-rollover-import-pkcs12"
+      },
+      {
+        "pattern": "pki/issuing-cas/config/<int:pk>/rollover/import-separate-files/",
+        "view": "pki.views.ca_rollover.view",
+        "name": "issuing_cas-rollover-import-separate-files"
+      },
+      {
+        "pattern": "pki/issuing-cas/config/<int:pk>/rollover/request-est/",
+        "view": "pki.views.ca_rollover.view",
+        "name": "issuing_cas-rollover-request-est"
+      },
+      {
+        "pattern": "pki/issuing-cas/config/<int:pk>/rollover/request-cmp/",
+        "view": "pki.views.ca_rollover.view",
+        "name": "issuing_cas-rollover-request-cmp"
+      },
+      {
+        "pattern": "pki/issuing-cas/config/<int:pk>/rollover/plan/",
+        "view": "pki.views.ca_rollover.view",
+        "name": "issuing_cas-rollover-plan"
+      },
+      {
+        "pattern": "pki/issuing-cas/config/<int:pk>/rollover/<int:rollover_pk>/start/",
+        "view": "pki.views.ca_rollover.view",
+        "name": "issuing_cas-rollover-start"
+      },
+      {
+        "pattern": "pki/issuing-cas/config/<int:pk>/rollover/<int:rollover_pk>/transition/",
+        "view": "pki.views.ca_rollover.view",
+        "name": "issuing_cas-rollover-transition"
+      },
+      {
+        "pattern": "pki/issuing-cas/config/<int:pk>/rollover/<int:rollover_pk>/complete/",
+        "view": "pki.views.ca_rollover.view",
+        "name": "issuing_cas-rollover-complete"
+      },
+      {
+        "pattern": "pki/issuing-cas/config/<int:pk>/rollover/<int:rollover_pk>/cancel/",
+        "view": "pki.views.ca_rollover.view",
+        "name": "issuing_cas-rollover-cancel"
+      },
+      {
         "pattern": "pki/issuing-cas/define-cert-content-est/<int:pk>/",
         "view": "pki.views.issuing_cas.view",
         "name": "issuing_cas-define-cert-content-est"
+      },
+      {
+        "pattern": "pki/issuing-cas/define-cert-content-csr/<int:pk>/",
+        "view": "pki.views.issuing_cas.view",
+        "name": "issuing_cas-define-cert-content-csr"
+      },
+      {
+        "pattern": "pki/issuing-cas/external-csr/<int:pk>/",
+        "view": "pki.views.issuing_cas.view",
+        "name": "issuing_cas-external-csr"
       },
       {
         "pattern": "pki/issuing-cas/request-cert-est/<int:pk>/",
@@ -5617,6 +6825,16 @@
         "name": "csrattrs"
       },
       {
+        "pattern": ".well-known/scep/^(?P<domain>[^/]+)/(?P<cert_profile>[^/]+)/$",
+        "view": "scep.views.view",
+        "name": "endpoint-profile"
+      },
+      {
+        "pattern": ".well-known/scep/^(?P<domain>[^/]+)/$",
+        "view": "scep.views.view",
+        "name": "endpoint"
+      },
+      {
         "pattern": "rest/^(?P<domain>[^/]+)/(?P<cert_profile>[^/]+)/enroll/?$",
         "view": "rest_pki.views.view",
         "name": "enroll"
@@ -5670,6 +6888,16 @@
         "pattern": "devices/opc-ua-gds/",
         "view": "devices.views.tables.view",
         "name": "opc_ua_gds"
+      },
+      {
+        "pattern": "devices/agents/",
+        "view": "devices.views.agents.view",
+        "name": "agents"
+      },
+      {
+        "pattern": "devices/agents/create/1-to-1/",
+        "view": "devices.views.agents.view",
+        "name": "agents_create_one_to_one"
       },
       {
         "pattern": "devices/create/",
@@ -5752,6 +6980,31 @@
         "name": "devices_no_onboarding_cmp_shared_secret_help"
       },
       {
+        "pattern": "devices/certificate-lifecycle-management/<int:pk>/no-onboarding/issue-application-credential/cmp-webui/",
+        "view": "help_pages.devices_help_views.view",
+        "name": "devices_no_onboarding_cmp_webui_help"
+      },
+      {
+        "pattern": "devices/certificate-lifecycle-management/<int:pk>/no-onboarding/issue-application-credential/est-webui/",
+        "view": "help_pages.devices_help_views.view",
+        "name": "devices_no_onboarding_est_webui_help"
+      },
+      {
+        "pattern": "devices/opc-ua-gds/certificate-lifecycle-management/<int:pk>/no-onboarding/issue-application-credential/cmp-webui/",
+        "view": "help_pages.devices_help_views.view",
+        "name": "opc_ua_gds_no_onboarding_cmp_webui_help"
+      },
+      {
+        "pattern": "devices/opc-ua-gds/certificate-lifecycle-management/<int:pk>/no-onboarding/issue-application-credential/est-webui/",
+        "view": "help_pages.devices_help_views.view",
+        "name": "opc_ua_gds_no_onboarding_est_webui_help"
+      },
+      {
+        "pattern": "devices/certificate-lifecycle-management/<int:pk>/revoke/cmp/",
+        "view": "help_pages.devices_help_views.view",
+        "name": "devices_device_revoke_cmp_help"
+      },
+      {
         "pattern": "devices/opc-ua-gds/certificate-lifecycle-management/<int:pk>/no-onboarding/issue-application-credential/cmp-shared-secret/",
         "view": "help_pages.devices_help_views.view",
         "name": "opc_ua_gds_no_onboarding_cmp_shared_secret_help"
@@ -5765,6 +7018,16 @@
         "pattern": "devices/opc-ua-gds/certificate-lifecycle-management/<int:pk>/no-onboarding/issue-application-credential/est-username-password/",
         "view": "help_pages.devices_help_views.view",
         "name": "opc_ua_gds_no_onboarding_est_username_password_help"
+      },
+      {
+        "pattern": "devices/certificate-lifecycle-management/<int:pk>/no-onboarding/issue-application-credential/scep/",
+        "view": "help_pages.devices_help_views.view",
+        "name": "devices_no_onboarding_scep_help"
+      },
+      {
+        "pattern": "devices/opc-ua-gds/certificate-lifecycle-management/<int:pk>/no-onboarding/issue-application-credential/scep/",
+        "view": "help_pages.devices_help_views.view",
+        "name": "opc_ua_gds_no_onboarding_scep_help"
       },
       {
         "pattern": "devices/certificate-lifecycle-management/<int:pk>/no-onboarding/issue-application-credential/rest-username-password/",
@@ -5792,9 +7055,29 @@
         "name": "devices_certificate_lifecycle_management_issue_profile_credential"
       },
       {
+        "pattern": "devices/certificate-lifecycle-management/<int:pk>/no-onboarding/issue-application-credential/manual/profile/<int:profile_id>/choose-method/",
+        "view": "devices.views.credential_issuance.view",
+        "name": "devices_certificate_lifecycle_management_choose_issuance_method"
+      },
+      {
+        "pattern": "devices/certificate-lifecycle-management/<int:pk>/no-onboarding/issue-application-credential/manual/profile/<int:profile_id>/csr/",
+        "view": "devices.views.credential_issuance.view",
+        "name": "devices_certificate_lifecycle_management_issue_csr_credential"
+      },
+      {
         "pattern": "devices/opc-ua-gds/certificate-lifecycle-management/<int:pk>/no-onboarding/issue-application-credential/manual/profile/<int:profile_id>/",
         "view": "devices.views.credential_issuance.view",
         "name": "opc_ua_gds_certificate_lifecycle_management_issue_profile_credential"
+      },
+      {
+        "pattern": "devices/opc-ua-gds/certificate-lifecycle-management/<int:pk>/no-onboarding/issue-application-credential/manual/profile/<int:profile_id>/choose-method/",
+        "view": "devices.views.credential_issuance.view",
+        "name": "opc_ua_gds_certificate_lifecycle_management_choose_issuance_method"
+      },
+      {
+        "pattern": "devices/opc-ua-gds/certificate-lifecycle-management/<int:pk>/no-onboarding/issue-application-credential/manual/profile/<int:profile_id>/csr/",
+        "view": "devices.views.credential_issuance.view",
+        "name": "opc_ua_gds_certificate_lifecycle_management_issue_csr_credential"
       },
       {
         "pattern": "devices/certificate-lifecycle-management/<int:pk>/onboarding/issue-domain-credential/cmp-shared-secret/",
@@ -5825,6 +7108,21 @@
         "pattern": "devices/opc-ua-gds/certificate-lifecycle-management/<int:pk>/onboarding/issue-domain-credential/rest-username-password/",
         "view": "help_pages.devices_help_views.view",
         "name": "opc_ua_gds_certificate_lifecycle_management_issue_domain_credential_rest_username_password"
+      },
+      {
+        "pattern": "devices/certificate-lifecycle-management/<int:pk>/agent/setup-profile/",
+        "view": "help_pages.devices_help_views.view",
+        "name": "devices_agent_setup_profile_help"
+      },
+      {
+        "pattern": "devices/certificate-lifecycle-management/<int:pk>/agent/setup-profile/download/",
+        "view": "help_pages.devices_help_views.view",
+        "name": "devices_agent_setup_profile_download"
+      },
+      {
+        "pattern": "devices/certificate-lifecycle-management/<int:pk>/agent/setup-profile/download-script/",
+        "view": "help_pages.devices_help_views.view",
+        "name": "devices_agent_setup_script_download"
       },
       {
         "pattern": "devices/certificate-lifecycle-management/<int:pk>/onboarding/issue-application-credential/",
@@ -6024,7 +7322,12 @@
       {
         "pattern": "devices/^opc-ua-gds-push/revoke-device(?:/(?P<pks>[0-9]+(?:/[0-9]+)*))?/?$",
         "view": "devices.views.revoke.view",
-        "name": "devices_device_revoke"
+        "name": "opc_ua_gds_push_device_revoke"
+      },
+      {
+        "pattern": "devices/^agents/revoke-device(?:/(?P<pks>[0-9]+(?:/[0-9]+)*))?/?$",
+        "view": "devices.views.revoke.view",
+        "name": "agents_device_revoke"
       },
       {
         "pattern": "devices/^delete-device(?:/(?P<pks>[0-9]+(?:/[0-9]+)*))?/?$",
@@ -6040,6 +7343,11 @@
         "pattern": "devices/^opc-ua-gds-push/delete-device(?:/(?P<pks>[0-9]+(?:/[0-9]+)*))?/?$",
         "view": "devices.views.delete.view",
         "name": "devices_device_delete"
+      },
+      {
+        "pattern": "devices/^agents/delete-device(?:/(?P<pks>[0-9]+(?:/[0-9]+)*))?/?$",
+        "view": "devices.views.delete.view",
+        "name": "agents_device_delete"
       },
       {
         "pattern": "devices/zero-touch-credentials/",
@@ -6142,6 +7450,11 @@
         "name": "zero_touch_credentials-aoki_demo_download"
       },
       {
+        "pattern": "devices/certificate-lifecycle-management/<int:pk>/no-onboarding/issue-application-credential/scep/download-config/",
+        "view": "help_pages.devices_help_views.view",
+        "name": "scep_config_download"
+      },
+      {
         "pattern": "management/",
         "view": "management.views.view",
         "name": "index"
@@ -6152,19 +7465,14 @@
         "name": "settings"
       },
       {
-        "pattern": "management/settings/internationalization/",
-        "view": "management.views.settings.view",
-        "name": "settings-internationalization"
-      },
-      {
-        "pattern": "management/settings/ui/",
-        "view": "management.views.settings.view",
-        "name": "settings-ui"
-      },
-      {
         "pattern": "management/settings/security/",
         "view": "management.views.settings.view",
         "name": "settings-security"
+      },
+      {
+        "pattern": "management/settings/account-security/",
+        "view": "management.views.settings.view",
+        "name": "settings-account-security"
       },
       {
         "pattern": "management/settings/logging/",
@@ -6210,6 +7518,26 @@
         "pattern": "management/tls/",
         "view": "management.views.tls.view",
         "name": "tls"
+      },
+      {
+        "pattern": "management/tls/add/external-csr/key/",
+        "view": "management.views.tls_external_csr.view",
+        "name": "tls-external-csr-key"
+      },
+      {
+        "pattern": "management/tls/add/external-csr/<int:pk>/truststore/",
+        "view": "management.views.tls_external_csr.view",
+        "name": "tls-external-csr-truststore"
+      },
+      {
+        "pattern": "management/tls/add/external-csr/<int:pk>/content/",
+        "view": "management.views.tls_external_csr.view",
+        "name": "tls-external-csr-content"
+      },
+      {
+        "pattern": "management/tls/add/external-csr/<int:pk>/",
+        "view": "management.views.tls_external_csr.view",
+        "name": "tls-external-csr"
       },
       {
         "pattern": "management/tls/add/method-select/",
@@ -6287,6 +7615,11 @@
         "name": "backend_configuration"
       },
       {
+        "pattern": "management/backend-configuration/pkcs11-assets/<str:asset>/download/",
+        "view": "management.views.backend_configuration.view",
+        "name": "backend_configuration_pkcs11_asset_download"
+      },
+      {
         "pattern": "management/notifications/refresh/",
         "view": "management.views.notifications.view",
         "name": "refresh_notifications"
@@ -6295,6 +7628,86 @@
         "pattern": "management/notifications/<int:pk>/delete/",
         "view": "management.views.notifications.view",
         "name": "notification_delete"
+      },
+      {
+        "pattern": "management/user-management/",
+        "view": "management.views.user_management.view",
+        "name": "user_management"
+      },
+      {
+        "pattern": "management/user-management/add_user/",
+        "view": "management.views.user_management.view",
+        "name": "add_user"
+      },
+      {
+        "pattern": "management/user-management/<int:pk>/delete/",
+        "view": "management.views.user_management.view",
+        "name": "delete_user"
+      },
+      {
+        "pattern": "management/user-management/<int:pk>/configure/",
+        "view": "management.views.user_management.view",
+        "name": "configure_user"
+      },
+      {
+        "pattern": "management/user-management/<int:pk>/details/",
+        "view": "management.views.user_management.view",
+        "name": "user_details"
+      },
+      {
+        "pattern": "management/user-management/<int:pk>/change_role/",
+        "view": "management.views.user_management.view",
+        "name": "change_role"
+      },
+      {
+        "pattern": "management/user-management/<int:pk>/change_password/",
+        "view": "management.views.user_management.view",
+        "name": "change_password"
+      },
+      {
+        "pattern": "management/user-management/<int:pk>/reset_otp/",
+        "view": "management.views.user_management.view",
+        "name": "reset_otp"
+      },
+      {
+        "pattern": "management/user-authentication/",
+        "view": "management.views.user_authentication.view",
+        "name": "user_authentication"
+      },
+      {
+        "pattern": "management/user-authentication/certificate/",
+        "view": "management.views.user_authentication.view",
+        "name": "certificate_authentication"
+      },
+      {
+        "pattern": "management/user-authentication/password/",
+        "view": "management.views.user_authentication.view",
+        "name": "password_policy"
+      },
+      {
+        "pattern": "management/user-authentication/password/list/download/",
+        "view": "management.views.user_authentication.view",
+        "name": "password_policy_list_download"
+      },
+      {
+        "pattern": "management/role_management/",
+        "view": "management.views.role_management.view",
+        "name": "role_management"
+      },
+      {
+        "pattern": "management/role_management/add/",
+        "view": "management.views.role_management.view",
+        "name": "add_role"
+      },
+      {
+        "pattern": "management/role_management/<int:pk>/edit/",
+        "view": "management.views.role_management.view",
+        "name": "edit_role"
+      },
+      {
+        "pattern": "management/role_management/<int:pk>/delete/",
+        "view": "management.views.role_management.view",
+        "name": "delete_role"
       },
       {
         "pattern": "management/notifications/",
@@ -6322,6 +7735,61 @@
         "name": "audit-log"
       },
       {
+        "pattern": "management/organization/",
+        "view": "management.views.organization.view",
+        "name": "organization"
+      },
+      {
+        "pattern": "management/organization/add/",
+        "view": "management.views.organization.view",
+        "name": "add_organization"
+      },
+      {
+        "pattern": "management/organization/<int:pk>/edit/",
+        "view": "management.views.organization.view",
+        "name": "edit_organization"
+      },
+      {
+        "pattern": "management/organization/<int:pk>/delete/",
+        "view": "management.views.organization.view",
+        "name": "delete_organization"
+      },
+      {
+        "pattern": "management/service-accounts/",
+        "view": "management.views.service_accounts.view",
+        "name": "service_account_list"
+      },
+      {
+        "pattern": "management/service-accounts/create/",
+        "view": "management.views.service_accounts.view",
+        "name": "service_account_create"
+      },
+      {
+        "pattern": "management/service-accounts/created/",
+        "view": "management.views.service_accounts.service_account_created_view",
+        "name": "service_account_created"
+      },
+      {
+        "pattern": "management/service-accounts/<int:pk>/",
+        "view": "management.views.service_accounts.view",
+        "name": "service_account_detail"
+      },
+      {
+        "pattern": "management/service-accounts/<int:pk>/generate-credential/",
+        "view": "management.views.service_accounts.generate_credential_view",
+        "name": "generate_credential"
+      },
+      {
+        "pattern": "management/service-accounts/<int:pk>/delete/",
+        "view": "management.views.service_accounts.view",
+        "name": "delete_service_account"
+      },
+      {
+        "pattern": "management/service-accounts/credentials/<int:pk>/revoke/",
+        "view": "management.views.service_accounts.revoke_credential_view",
+        "name": "revoke_credential"
+      },
+      {
         "pattern": "prometheus/metrics",
         "view": "trustpoint.views.prometheus.prometheus_metrics_view",
         "name": "prometheus-metrics"
@@ -6339,6 +7807,51 @@
       {
         "pattern": "",
         "view": "trustpoint.views.base.view"
+      },
+      {
+        "pattern": "discovery/",
+        "view": "discovery.views.view",
+        "name": "device_list"
+      },
+      {
+        "pattern": "discovery/start-scan/",
+        "view": "discovery.views.view",
+        "name": "start_scan"
+      },
+      {
+        "pattern": "discovery/stop-scan/",
+        "view": "discovery.views.view",
+        "name": "stop_scan"
+      },
+      {
+        "pattern": "discovery/clear/",
+        "view": "discovery.views.view",
+        "name": "clear_devices"
+      },
+      {
+        "pattern": "discovery/device/<int:device_id>/",
+        "view": "discovery.views.view",
+        "name": "device_detail"
+      },
+      {
+        "pattern": "discovery/port-config/",
+        "view": "discovery.views.view",
+        "name": "port_config"
+      },
+      {
+        "pattern": "discovery/port/add/",
+        "view": "discovery.views.view",
+        "name": "add_port"
+      },
+      {
+        "pattern": "discovery/port/delete/<int:port_id>/",
+        "view": "discovery.views.view",
+        "name": "delete_port"
+      },
+      {
+        "pattern": "discovery/export-csv/",
+        "view": "discovery.views.view",
+        "name": "export_csv"
       },
       {
         "pattern": "workflows2/definitions/",
@@ -6444,6 +7957,51 @@
         "pattern": "workflows2/api/context-catalog/",
         "view": "workflows2.views.context_catalog.view",
         "name": "context_catalog"
+      },
+      {
+        "pattern": "agents/profiles/",
+        "view": "agents.web_views.view",
+        "name": "profiles"
+      },
+      {
+        "pattern": "agents/profiles/create/",
+        "view": "agents.web_views.view",
+        "name": "profiles-create"
+      },
+      {
+        "pattern": "agents/profiles/<int:pk>/",
+        "view": "agents.web_views.view",
+        "name": "profiles-config"
+      },
+      {
+        "pattern": "agents/^profiles/delete(?:/(?P<pks>([0-9]+/)*[0-9]*))?/?$",
+        "view": "agents.web_views.view",
+        "name": "profiles-delete_confirm"
+      },
+      {
+        "pattern": "agents/<int:agent_id>/assigned-profiles/",
+        "view": "agents.web_views.view",
+        "name": "assigned-profiles-list"
+      },
+      {
+        "pattern": "agents/<int:agent_id>/assigned-profiles/create/",
+        "view": "agents.web_views.view",
+        "name": "assigned-profiles-create"
+      },
+      {
+        "pattern": "agents/<int:agent_id>/assigned-profiles/<int:pk>/edit/",
+        "view": "agents.web_views.view",
+        "name": "assigned-profiles-edit"
+      },
+      {
+        "pattern": "agents/<int:agent_id>/assigned-profiles/<int:pk>/force-update/",
+        "view": "agents.web_views.view",
+        "name": "assigned-profiles-force-update"
+      },
+      {
+        "pattern": "agents/^(?P<agent_id>[0-9]+)/assigned-profiles/delete(?:/(?P<pks>([0-9]+/)*[0-9]*))?/?$",
+        "view": "agents.web_views.view",
+        "name": "assigned-profiles-delete_confirm"
       },
       {
         "pattern": "api/^devices/$",
@@ -6756,6 +8314,16 @@
         "name": "backup-detail"
       },
       {
+        "pattern": "api/^capabilities/$",
+        "view": "management.views.capabilities.CapabilitiesViewSet",
+        "name": "capabilities-list"
+      },
+      {
+        "pattern": "api/^capabilities\\.(?P<format>[a-z0-9]+)/?$",
+        "view": "management.views.capabilities.CapabilitiesViewSet",
+        "name": "capabilities-list"
+      },
+      {
         "pattern": "api/^logging/delete/(?P<file_name>[^/]+)/$",
         "view": "management.views.logging.LoggingViewSet",
         "name": "logging-delete"
@@ -6806,6 +8374,66 @@
         "name": "tls-detail"
       },
       {
+        "pattern": "api/^users/$",
+        "view": "management.views.user_management.UserViewSet",
+        "name": "users-list"
+      },
+      {
+        "pattern": "api/^users\\.(?P<format>[a-z0-9]+)/?$",
+        "view": "management.views.user_management.UserViewSet",
+        "name": "users-list"
+      },
+      {
+        "pattern": "api/^users/(?P<pk>[^/.]+)/$",
+        "view": "management.views.user_management.UserViewSet",
+        "name": "users-detail"
+      },
+      {
+        "pattern": "api/^users/(?P<pk>[^/.]+)\\.(?P<format>[a-z0-9]+)/?$",
+        "view": "management.views.user_management.UserViewSet",
+        "name": "users-detail"
+      },
+      {
+        "pattern": "api/^roles/$",
+        "view": "management.views.role_management.RoleViewSet",
+        "name": "roles-list"
+      },
+      {
+        "pattern": "api/^roles\\.(?P<format>[a-z0-9]+)/?$",
+        "view": "management.views.role_management.RoleViewSet",
+        "name": "roles-list"
+      },
+      {
+        "pattern": "api/^roles/available-permissions/$",
+        "view": "management.views.role_management.RoleViewSet",
+        "name": "roles-available-permissions"
+      },
+      {
+        "pattern": "api/^roles/available-permissions\\.(?P<format>[a-z0-9]+)/?$",
+        "view": "management.views.role_management.RoleViewSet",
+        "name": "roles-available-permissions"
+      },
+      {
+        "pattern": "api/^roles/(?P<pk>[^/.]+)/$",
+        "view": "management.views.role_management.RoleViewSet",
+        "name": "roles-detail"
+      },
+      {
+        "pattern": "api/^roles/(?P<pk>[^/.]+)\\.(?P<format>[a-z0-9]+)/?$",
+        "view": "management.views.role_management.RoleViewSet",
+        "name": "roles-detail"
+      },
+      {
+        "pattern": "api/^health/$",
+        "view": "management.views.health.HealthViewSet",
+        "name": "health-list"
+      },
+      {
+        "pattern": "api/^health\\.(?P<format>[a-z0-9]+)/?$",
+        "view": "management.views.health.HealthViewSet",
+        "name": "health-list"
+      },
+      {
         "pattern": "api/",
         "view": "rest_framework.routers.view",
         "name": "api-root"
@@ -6819,6 +8447,21 @@
         "pattern": "api/rest-pki/enroll/",
         "view": "rest_pki.api_views.view",
         "name": "rest-pki-enroll"
+      },
+      {
+        "pattern": "api/rest-pki/revoke/",
+        "view": "rest_pki.api_views.view",
+        "name": "rest-pki-revoke"
+      },
+      {
+        "pattern": "api/agents/jobs/",
+        "view": "agents.api_views.view",
+        "name": "agent-jobs"
+      },
+      {
+        "pattern": "api/agents/jobs/result/",
+        "view": "agents.api_views.view",
+        "name": "agent-jobs-result"
       },
       {
         "pattern": "api/^workflow2-definitions/$",
@@ -6852,7 +8495,7 @@
       },
       {
         "pattern": "api/token/",
-        "view": "trustpoint.urls.view",
+        "view": "users.oauth2_views.view",
         "name": "token_obtain_pair"
       },
       {
@@ -6889,11 +8532,14 @@
     "pki",
     "cmp",
     "est",
+    "scep",
     "rest_pki",
     "signer",
     "aoki",
     "crypto",
     "management",
+    "agents",
+    "discovery",
     "workflows2",
     "behave_django"
   ]

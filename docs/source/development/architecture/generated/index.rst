@@ -15,101 +15,116 @@ This document provides an automatically generated overview of the Trustpoint arc
 Statistics
 ----------
 
-- **Applications**: 18
-- **Models**: 106
-- **URL Routes**: 549
+- **Applications**: 21
+- **Models**: 123
+- **URL Routes**: 701
 
 
 Applications
 ------------
 
+**agents**
+
+   - Models: 3
+   - Path: ``/home/runner/work/trustpoint/trustpoint/trustpoint/agents``
+
 **aoki**
 
    - Models: 0
-   - Path: ``/Users/florianhandke/PycharmProjects/trustpoint/trustpoint/aoki``
+   - Path: ``/home/runner/work/trustpoint/trustpoint/trustpoint/aoki``
 
 **appsecrets**
 
    - Models: 3
-   - Path: ``/Users/florianhandke/PycharmProjects/trustpoint/trustpoint/appsecrets``
+   - Path: ``/home/runner/work/trustpoint/trustpoint/trustpoint/appsecrets``
 
 **behave_django**
 
    - Models: 0
-   - Path: ``/Users/florianhandke/PycharmProjects/trustpoint/.venv/lib/python3.13/site-packages/behave_django``
+   - Path: ``/home/runner/work/trustpoint/trustpoint/.venv/lib/python3.14/site-packages/behave_django``
 
 **cmp**
 
    - Models: 1
-   - Path: ``/Users/florianhandke/PycharmProjects/trustpoint/trustpoint/cmp``
+   - Path: ``/home/runner/work/trustpoint/trustpoint/trustpoint/cmp``
 
 **crypto**
 
-   - Models: 12
-   - Path: ``/Users/florianhandke/PycharmProjects/trustpoint/trustpoint/crypto``
+   - Models: 13
+   - Path: ``/home/runner/work/trustpoint/trustpoint/trustpoint/crypto``
 
 **devices**
 
    - Models: 2
-   - Path: ``/Users/florianhandke/PycharmProjects/trustpoint/trustpoint/devices``
+   - Path: ``/home/runner/work/trustpoint/trustpoint/trustpoint/devices``
+
+**discovery**
+
+   - Models: 2
+   - Path: ``/home/runner/work/trustpoint/trustpoint/trustpoint/discovery``
 
 **est**
 
    - Models: 0
-   - Path: ``/Users/florianhandke/PycharmProjects/trustpoint/trustpoint/est``
+   - Path: ``/home/runner/work/trustpoint/trustpoint/trustpoint/est``
 
 **help_pages**
 
    - Models: 0
-   - Path: ``/Users/florianhandke/PycharmProjects/trustpoint/trustpoint/help_pages``
+   - Path: ``/home/runner/work/trustpoint/trustpoint/trustpoint/help_pages``
 
 **home**
 
    - Models: 0
-   - Path: ``/Users/florianhandke/PycharmProjects/trustpoint/trustpoint/home``
+   - Path: ``/home/runner/work/trustpoint/trustpoint/trustpoint/home``
 
 **management**
 
-   - Models: 17
-   - Path: ``/Users/florianhandke/PycharmProjects/trustpoint/trustpoint/management``
+   - Models: 19
+   - Path: ``/home/runner/work/trustpoint/trustpoint/trustpoint/management``
 
 **onboarding**
 
    - Models: 2
-   - Path: ``/Users/florianhandke/PycharmProjects/trustpoint/trustpoint/onboarding``
+   - Path: ``/home/runner/work/trustpoint/trustpoint/trustpoint/onboarding``
 
 **pki**
 
-   - Models: 57
-   - Path: ``/Users/florianhandke/PycharmProjects/trustpoint/trustpoint/pki``
+   - Models: 58
+   - Path: ``/home/runner/work/trustpoint/trustpoint/trustpoint/pki``
 
 **rest_pki**
 
    - Models: 0
-   - Path: ``/Users/florianhandke/PycharmProjects/trustpoint/trustpoint/rest_pki``
+   - Path: ``/home/runner/work/trustpoint/trustpoint/trustpoint/rest_pki``
+
+**scep**
+
+   - Models: 1
+   - Path: ``/home/runner/work/trustpoint/trustpoint/trustpoint/scep``
 
 **setup_wizard**
 
    - Models: 2
-   - Path: ``/Users/florianhandke/PycharmProjects/trustpoint/trustpoint/setup_wizard``
+   - Path: ``/home/runner/work/trustpoint/trustpoint/trustpoint/setup_wizard``
 
 **shared**
 
    - Models: 0
-   - Path: ``/Users/florianhandke/PycharmProjects/trustpoint/trustpoint/shared``
+   - Path: ``/home/runner/work/trustpoint/trustpoint/trustpoint/shared``
 
 **signer**
 
    - Models: 2
-   - Path: ``/Users/florianhandke/PycharmProjects/trustpoint/trustpoint/signer``
+   - Path: ``/home/runner/work/trustpoint/trustpoint/trustpoint/signer``
 
 **users**
 
-   - Models: 0
-   - Path: ``/Users/florianhandke/PycharmProjects/trustpoint/trustpoint/users``
+   - Models: 7
+   - Path: ``/home/runner/work/trustpoint/trustpoint/trustpoint/users``
 
 **workflows2**
 
    - Models: 8
-   - Path: ``/Users/florianhandke/PycharmProjects/trustpoint/trustpoint/workflows2``
+   - Path: ``/home/runner/work/trustpoint/trustpoint/trustpoint/workflows2``
 
