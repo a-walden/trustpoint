@@ -814,6 +814,20 @@ class CmpCertConfAuthentication(CmpAuthenticationBase):
             issued_cred.domain.unique_name if issued_cred.domain else 'unknown',
         )
 
+        # AOKI: sign the pkiConf with the domain DevOwnerID (not the issuing CA),
+        # so a domain-blind device can verify the pkiConf protection against the
+        # Belden DevOwner Root it ships with — the same trust anchor it used for
+        # the IP. Without this, pkiConf falls back to the issuing CA (whose root
+        # the device may not trust), breaking the transaction after the LDevID is
+        # already issued. If the domain has no DevOwnerID (non-AOKI domain), leave
+        # owner_credential unset and the responder falls back to the issuing CA.
+        from aoki.views import AokiServiceMixin
+        owner_credential = AokiServiceMixin.get_domain_based_owner_credential(issued_cred.domain)
+        if owner_credential is not None:
+            context.owner_credential = owner_credential
+            context.is_aoki = True
+            self.logger.info('certConf: using domain DevOwnerID to protect the pkiConf response.')
+
     def _resolve_certconf_hash_algorithm(self, context: CmpCertConfRequestContext) -> hashes.HashAlgorithm:
         """Resolve the digest declared by certConf hashAlg, defaulting to SHA-256."""
         if not context.cert_hash_algorithm_oid:
