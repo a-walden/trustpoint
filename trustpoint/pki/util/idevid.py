@@ -150,9 +150,12 @@ class IDevIDAuthenticator(LoggerMixin):
             domain=domain,
             onboarding_config=onboarding_config_model,
         )
-        # if a device with the same UUID already exists (e.g. in a different domain),
-        # this will violate the unique constraint, so a random UUID is assigned instead
-        if idevid_uuid and not DeviceModel.objects.filter(rfc_4122_uuid=idevid_uuid).exists():
+        # common_name and rfc_4122_uuid are unique PER DOMAIN. The same physical
+        # device (same IDevID UUID) may therefore legitimately exist in more than
+        # one domain and KEEPS its IDevID UUID in each. Only fall back to a random
+        # UUID if that UUID is already taken WITHIN THIS domain (should not happen
+        # for a fresh onboarding, but keeps the per-domain constraint satisfied).
+        if idevid_uuid and not DeviceModel.objects.filter(rfc_4122_uuid=idevid_uuid, domain=domain).exists():
             device.rfc_4122_uuid = idevid_uuid
         onboarding_config_model.full_clean()
         onboarding_config_model.save()

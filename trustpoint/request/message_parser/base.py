@@ -63,6 +63,14 @@ class CertProfileParsing(ParsingComponent, LoggerMixin):
             return
         certprofile_str = context.cert_profile_str
 
+        # Domain-scoped AOKI path carries the '.aoki' marker in the profile
+        # segment (/p/{domain}/.aoki/initialization). Treat it as "no explicit
+        # profile" so the domain credential profile is resolved below, just like
+        # the legacy domain-less '.aoki' domain marker.
+        if certprofile_str == '.aoki':
+            certprofile_str = None
+            context.cert_profile_str = None
+
         if not certprofile_str:
             if context.domain is not None:
                 certprofile_str = context.domain.get_domain_credential_profile_name()

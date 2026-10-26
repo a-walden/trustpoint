@@ -58,6 +58,12 @@ class BaseRequestContext(LoggerMixin):
     authenticated_secret_config: str | None = None
     authenticated_secret_pk: int | None = None
 
+    # True when this is an AOKI request (legacy domain-less '.aoki' path or the
+    # domain-scoped '/p/{domain}/.aoki/initialization' path). Set during
+    # authentication so later stages (DevOwnerID authorization) can rely on it
+    # after the '.aoki' profile marker has been normalized away.
+    is_aoki: bool = False
+
     owner_credential: CredentialModel | None = None
     issuer_credential: CredentialModel | None = None
 

@@ -163,6 +163,13 @@ class CmpCertificateRequestProcessor(AbstractOperationProcessor, LoggerMixin):
         replay_context.client_certificate = poll_context.client_certificate
         replay_context.client_intermediate_certificate = poll_context.client_intermediate_certificate
         replay_context.owner_credential = poll_context.owner_credential
+        # Preserve the AOKI marker across the replay. The domain-scoped AOKI path
+        # carries '.aoki' only in the original request's URL, which the rebuilt
+        # replay context no longer sees; without this, the re-run DevOwnerID
+        # authorization below treats the replay as a plain domain CMP request,
+        # drops the DevOwnerID signer, and the IP falls back to the issuing-CA
+        # signer — which a domain-blind AOKI device cannot verify.
+        replay_context.is_aoki = getattr(poll_context, 'is_aoki', False)
         replay_context.actor = poll_context.actor
         replay_context.cmp_shared_secret = poll_context.cmp_shared_secret
         replay_context.implicit_confirm = transaction_record.implicit_confirm

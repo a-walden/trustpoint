@@ -298,7 +298,24 @@ class CmpInitializationResponder(CmpMessageResponder):
 
         ip_extra_certs = univ.SequenceOf()
 
-        if context:
+        if signer_credential and issuer_credential.pk != signer_credential.pk:
+            # AOKI (domain-scoped / legacy): the IP is protected by the domain
+            # DevOwnerID and the device is domain-blind — it trusts only the
+            # Belden DevOwner Root it ships with and validates the IP protection
+            # against that anchor. Send ONLY the DevOwnerID signer chain, and drop
+            # the self-signed root: the device already holds the root as its trust
+            # anchor, and including it (or the issuing-CA chain, whose root the
+            # device does not trust) makes OpenSSL CMP reject the path with
+            # "self-signed certificate in certificate chain". The issued LDevID
+            # carries its own issuing chain separately.
+            signer_chain = [
+                signer_credential.get_certificate(),
+                *signer_credential.get_certificate_chain(),
+            ]
+            certificate_chain = [
+                cert for cert in signer_chain if cert.subject != cert.issuer
+            ]
+        elif context:
             certificate_chain = CmpMessageResponder.build_certificate_chain_with_rollover(
                 issuer_credential, context
             )
@@ -307,14 +324,6 @@ class CmpInitializationResponder(CmpMessageResponder):
                 issuer_credential.get_certificate(),
                 *issuer_credential.get_certificate_chain(),
             ]
-
-        if signer_credential and issuer_credential.pk != signer_credential.pk:
-            # Include both the DevOwnerID (signer) and the Issuer CA in extraCerts
-            signer_chain = [
-                signer_credential.get_certificate(),
-                *signer_credential.get_certificate_chain(),
-            ]
-            certificate_chain = signer_chain + certificate_chain
         for certificate in certificate_chain:
             der_bytes = certificate.public_bytes(encoding=Encoding.DER)
             asn1_certificate, _ = decoder.decode(der_bytes, asn1Spec=rfc4210.CMPCertificate())
@@ -855,6 +864,17 @@ class CmpPkiConfResponder(CmpMessageResponder):
             exc_msg = 'CmpPkiConfResponder requires a CmpCertConfRequestContext.'
             raise TypeError(exc_msg)
 
+        # AOKI: the pkiConf must stay protected by the same domain DevOwnerID as
+        # the IP, so a domain-blind device can verify it against the Belden
+        # DevOwner Root it trusts. The certConf that triggers this pkiConf may be
+        # processed on a pipeline that did not set owner_credential, so resolve the
+        # domain DevOwnerID here when it is missing. Domains without a DevOwnerID
+        # fall back to the issuing-CA signer unchanged.
+        if context.owner_credential is None and context.domain is not None:
+            from aoki.views import AokiServiceMixin  # noqa: PLC0415 - avoid request/view import cycle
+            _owner = AokiServiceMixin.get_domain_based_owner_credential(context.domain)
+            if _owner is not None:
+                context.owner_credential = _owner
         if context.issuer_credential is not None:
             signer_credential = context.owner_credential or context.issuer_credential
             issuer_cert: x509.Certificate | None = signer_credential.get_certificate()
