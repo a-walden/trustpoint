@@ -58,7 +58,21 @@ class CmpAuthenticationBase(AuthenticationComponent, LoggerMixin):
         if hasattr(context, 'raw_message') and context.raw_message:
             request_path = context.raw_message.path
 
-        return bool(domain_name == '.aoki' and request_path and '/p/.aoki/initialization' in request_path)
+        if not request_path:
+            return False
+        # Legacy, domain-less AOKI path: /.well-known/cmp/p/.aoki/initialization
+        if domain_name == '.aoki' and '/p/.aoki/initialization' in request_path:
+            context.is_aoki = True
+            return True
+        # Domain-scoped AOKI path: /.well-known/cmp/p/{domain}/.aoki/initialization
+        # The caller (Onboarding Service, from the proxy's authenticated enrollment
+        # token) states the tenant explicitly; '.aoki' is carried in the profile
+        # segment so AOKI semantics (DevOwnerID signing) are preserved while the
+        # domain is resolved from the URL instead of inferred from the IDevID.
+        if '/.aoki/initialization' in request_path:
+            context.is_aoki = True
+            return True
+        return False
 
     def _verify_protection_signature(self, parsed_message: rfc4210.PKIMessage,
                                      cmp_signer_cert: x509.Certificate) -> None:
@@ -421,10 +435,17 @@ class CmpSignatureBasedInitializationAuthentication(CmpAuthenticationBase):
                              intermediate_certs: list[x509.Certificate]) -> DeviceModel:
         """Authenticate the device using IDevID."""
         is_aoki = self._is_aoki_request(context)
+        # For AOKI, default to inferring the domain from the IDevID registration
+        # (legacy domain-less path). If the caller supplied an explicit domain
+        # (domain-scoped AOKI path /p/{domain}/.aoki/initialization), honor it so
+        # the device is routed + isolated to that tenant directly. The domain is
+        # asserted by the Onboarding Service (from the proxy's authenticated
+        # enrollment token), never by the device.
+        aoki_domain = context.domain if (is_aoki and context.domain) else None
         device = IDevIDAuthenticator.authenticate_idevid_from_x509(
             idevid_cert=cmp_signer_cert,
             intermediate_cas=intermediate_certs,
-            domain=None if is_aoki else context.domain,
+            domain=aoki_domain if is_aoki else context.domain,
             onboarding_protocol=OnboardingProtocol.AOKI if is_aoki else OnboardingProtocol.CMP_IDEVID,
             pki_protocol=OnboardingPkiProtocol.CMP,
         )

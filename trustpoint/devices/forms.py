@@ -441,7 +441,7 @@ class NoOnboardingCreateForm(forms.Form):
         """
         common_name = cast('str', self.cleaned_data['common_name'])
         validate_common_name_characters(common_name)
-        if DeviceModel.objects.filter(common_name=common_name).exists():
+        if DeviceModel.objects.filter(common_name=common_name, domain=self.cleaned_data.get('domain')).exists():
             err_msg = _('Device with this common name already exists.')
             raise forms.ValidationError(err_msg)
         return common_name
@@ -597,7 +597,7 @@ class OnboardingCreateForm(forms.Form):
         """
         common_name = cast('str', self.cleaned_data['common_name'])
         validate_common_name_characters(common_name)
-        if DeviceModel.objects.filter(common_name=common_name).exists():
+        if DeviceModel.objects.filter(common_name=common_name, domain=self.cleaned_data.get('domain')).exists():
             err_msg = _('Device with this common name already exists.')
             raise forms.ValidationError(err_msg)
         return common_name
@@ -782,7 +782,7 @@ class OpcUaGdsPushCreateForm(forms.Form):
             The device name if it passed the checks.
         """
         common_name = str(self.cleaned_data.get('common_name'))
-        if DeviceModel.objects.filter(common_name=common_name).exists():
+        if DeviceModel.objects.filter(common_name=common_name, domain=self.cleaned_data.get('domain')).exists():
             err_msg = _('Device with this common name already exists.')
             raise forms.ValidationError(err_msg)
         return common_name
@@ -898,7 +898,9 @@ class ClmDeviceModelOnboardingForm(forms.Form):
         """
         common_name = cast('str', self.cleaned_data['common_name'])
         validate_common_name_characters(common_name)
-        if DeviceModel.objects.filter(common_name=common_name).exclude(pk=self.instance.pk).exists():
+        if DeviceModel.objects.filter(
+                common_name=common_name, domain=self.cleaned_data.get('domain')
+        ).exclude(pk=self.instance.pk).exists():
             err_msg = _('Device with this common name already exists.')
             raise forms.ValidationError(err_msg)
         return common_name
@@ -1128,7 +1130,9 @@ class ClmDeviceModelNoOnboardingForm(forms.Form):
         """
         common_name = cast('str', self.cleaned_data['common_name'])
         validate_common_name_characters(common_name)
-        if DeviceModel.objects.filter(common_name=common_name).exclude(pk=self.instance.pk).exists():
+        if DeviceModel.objects.filter(
+                common_name=common_name, domain=self.cleaned_data.get('domain')
+        ).exclude(pk=self.instance.pk).exists():
             err_msg = _('Device with this common name already exists.')
             raise forms.ValidationError(err_msg)
         return common_name
@@ -1282,7 +1286,9 @@ class ClmAgentDeviceForm(forms.Form):
         """
         common_name = cast('str', self.cleaned_data['common_name'])
         validate_common_name_characters(common_name)
-        if DeviceModel.objects.filter(common_name=common_name).exclude(pk=self.instance.pk).exists():
+        if DeviceModel.objects.filter(
+                common_name=common_name, domain=self.cleaned_data.get('domain')
+        ).exclude(pk=self.instance.pk).exists():
             err_msg = _('Device with this common name already exists.')
             raise forms.ValidationError(err_msg)
         return common_name

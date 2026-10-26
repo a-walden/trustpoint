@@ -179,9 +179,9 @@ class Command(CertificateCreationCommandMixin, LoggerMixin, BaseCommand):
         Returns:
             DeviceModel: The created or existing device.
         """
-        if DeviceModel.objects.filter(common_name=device_name).exists():
+        if DeviceModel.objects.filter(common_name=device_name, domain=domain).exists():
             self.log_and_stdout(f'Device "{device_name}" already exists.')
-            return DeviceModel.objects.get(common_name=device_name)
+            return DeviceModel.objects.get(common_name=device_name, domain=domain)
 
         no_onboarding_config = NoOnboardingConfigModel()
         no_onboarding_config.set_pki_protocols(pki_protocols)

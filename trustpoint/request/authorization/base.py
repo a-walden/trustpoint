@@ -76,6 +76,14 @@ class CertificateProfileAuthorization(AuthorizationComponent, LoggerMixin):
 
         requested_profile = context.cert_profile_str
 
+        # Domain-scoped AOKI path carries '.aoki' in the profile segment; treat it
+        # as unspecified so the domain credential profile is used (same as the
+        # legacy '.aoki' domain marker). `is_aoki` is true for either form.
+        is_aoki = context.domain_str == '.aoki' or requested_profile == '.aoki'
+        if requested_profile == '.aoki':
+            requested_profile = None
+            context.cert_profile_str = None
+
         if not context.domain:
             error_message = 'Domain information is missing in the context. Authorization denied.'
             self.logger.warning('Certificate profile authorization failed: Domain information is missing')
@@ -86,7 +94,7 @@ class CertificateProfileAuthorization(AuthorizationComponent, LoggerMixin):
             self.logger.warning('Certificate profile authorization failed: Device information is missing')
             raise ValueError(error_message)
 
-        if not requested_profile and context.domain_str == '.aoki':
+        if not requested_profile and is_aoki:
             # For AOKI requests, if no profile is specified, default to the domain credential profile
             requested_profile = context.domain.get_domain_credential_profile_name()
             context.cert_profile_str = requested_profile
@@ -224,7 +232,7 @@ class DevOwnerIDAuthorization(AuthorizationComponent, LoggerMixin):
         """Authorize the request based on the DevOwnerID corresponding to the client certificate."""
         if context.protocol != 'cmp':
             return
-        if context.domain_str != '.aoki':
+        if context.domain_str != '.aoki' and not getattr(context, 'is_aoki', False):
             return
 
         client_cert = context.client_certificate

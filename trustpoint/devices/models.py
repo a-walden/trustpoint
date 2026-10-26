@@ -51,12 +51,11 @@ __all__ = [
 class DeviceModel(CustomDeleteActionModel):
     """The DeviceModel."""
 
-    common_name = models.CharField(_('Device'), max_length=100, default='', unique=True)
+    common_name = models.CharField(_('Device'), max_length=100, default='')
     serial_number = models.CharField(_('Serial-Number'), max_length=100, default='', blank=True, null=False)
     rfc_4122_uuid = models.UUIDField(
         _('Device UUID'),
         default=uuid.uuid4,
-        unique=True,
         editable=False,
         help_text=_(
             'RFC 4122 version 4 UUID uniquely identifying this device. '
@@ -129,6 +128,18 @@ class DeviceModel(CustomDeleteActionModel):
             'Timestamp of the most recent scheduled periodic server certificate and trustlist update.'
         ),
     )
+
+    class Meta(TypedModelMeta):
+        """A device's common_name and UUID are unique PER DOMAIN, not globally,
+        so the same physical device (same IDevID) can be onboarded into more than
+        one domain (tenant) — e.g. a change of ownership. Postgres treats NULL
+        domains as distinct, which is fine for domainless setup/RA devices."""
+        constraints = [
+            models.UniqueConstraint(fields=['common_name', 'domain'],
+                                    name='unique_device_common_name_per_domain'),
+            models.UniqueConstraint(fields=['rfc_4122_uuid', 'domain'],
+                                    name='unique_device_uuid_per_domain'),
+        ]
 
     def __str__(self) -> str:
         """Returns a human-readable string representation."""

@@ -97,9 +97,9 @@ class Command(CertificateCreationCommandMixin, LoggerMixin, BaseCommand):
 
         # Create EST device
         est_device = None
-        if DeviceModel.objects.filter(common_name='CA Issuer - EST').exists():
+        if DeviceModel.objects.filter(common_name='CA Issuer - EST', domain=domain).exists():
             self.log_and_stdout('Device "CA Issuer - EST" already exists.')
-            est_device = DeviceModel.objects.get(common_name='CA Issuer - EST')
+            est_device = DeviceModel.objects.get(common_name='CA Issuer - EST', domain=domain)
         else:
             est_no_onboarding_config = NoOnboardingConfigModel()
             est_no_onboarding_config.set_pki_protocols([NoOnboardingPkiProtocol.EST_USERNAME_PASSWORD])
@@ -120,9 +120,9 @@ class Command(CertificateCreationCommandMixin, LoggerMixin, BaseCommand):
 
         # Create CMP device
         cmp_device = None
-        if DeviceModel.objects.filter(common_name='CA Issuer - CMP').exists():
+        if DeviceModel.objects.filter(common_name='CA Issuer - CMP', domain=domain).exists():
             self.log_and_stdout('Device "CA Issuer - CMP" already exists.')
-            cmp_device = DeviceModel.objects.get(common_name='CA Issuer - CMP')
+            cmp_device = DeviceModel.objects.get(common_name='CA Issuer - CMP', domain=domain)
         else:
             cmp_no_onboarding_config = NoOnboardingConfigModel()
             cmp_no_onboarding_config.set_pki_protocols([NoOnboardingPkiProtocol.CMP_SHARED_SECRET])
