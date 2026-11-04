@@ -24,6 +24,7 @@ from devices.secrets import retire_onboarding_secrets
 from pki.models.ca_rollover import CaRolloverState
 from pki.services.ca_rollover import CaRolloverService
 from request.message_responder.base import AbstractMessageResponder
+from request.message_responder.ca_pubs import build_ca_pubs, load_ca_pubs_certificates
 from request.operation_processor import LocalCaCmpSignatureProcessor
 from request.request_context import (
     CmpBaseRequestContext,
@@ -297,8 +298,9 @@ class CmpInitializationResponder(CmpMessageResponder):
                                                             else issuer_credential.get_certificate())
 
         ip_extra_certs = univ.SequenceOf()
+        is_aoki = bool(signer_credential and issuer_credential.pk != signer_credential.pk)
 
-        if signer_credential and issuer_credential.pk != signer_credential.pk:
+        if is_aoki:
             # AOKI (domain-scoped / legacy): the IP is protected by the domain
             # DevOwnerID and the device is domain-blind — it trusts only the
             # Belden DevOwner Root it ships with and validates the IP protection
@@ -333,11 +335,11 @@ class CmpInitializationResponder(CmpMessageResponder):
         ip_body['ip'] = rfc4210.CertRepMessage().subtype(
             explicitTag=tag.Tag(tag.tagClassContext, tag.tagFormatConstructed, 1)
         )
-        ip_body['ip']['caPubs'] = univ.SequenceOf().subtype(
-            sizeSpec=rfc4210.constraint.ValueSizeConstraint(1, rfc4210.MAX),
-            explicitTag=tag.Tag(tag.tagClassContext, tag.tagFormatConstructed, 1),
-        )
-        # TODO(AlexHx8472): Add TLS Server Certificate Root CA  # noqa: FIX002
+        # caPubs: optionally hand the requester CA certificates to trust (SZTO: the
+        # management CA root for the Onboarding Service's TLS server certificate).
+        # Not for AOKI: a domain-blind device trusts only the DevOwner Root and must
+        # not receive other CAs.
+        ip_body['ip']['caPubs'] = build_ca_pubs([] if is_aoki else load_ca_pubs_certificates())
 
         cert_response = rfc4210.CertResponse()
         cert_response['certReqId'] = 0
