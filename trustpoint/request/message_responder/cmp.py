@@ -870,9 +870,11 @@ class CmpPkiConfResponder(CmpMessageResponder):
         # the IP, so a domain-blind device can verify it against the Belden
         # DevOwner Root it trusts. The certConf that triggers this pkiConf may be
         # processed on a pipeline that did not set owner_credential, so resolve the
-        # domain DevOwnerID here when it is missing. Domains without a DevOwnerID
-        # fall back to the issuing-CA signer unchanged.
-        if context.owner_credential is None and context.domain is not None:
+        # domain DevOwnerID here when it is missing — but ONLY for an AOKI transaction
+        # (context.is_aoki, set by the certConf handler for a domain-credential
+        # confirmation). A plain application-cert certConf (tls_server / tls_client)
+        # keeps the issuing-CA signer, which the enrolling client trusts.
+        if context.is_aoki and context.owner_credential is None and context.domain is not None:
             from aoki.views import AokiServiceMixin  # noqa: PLC0415 - avoid request/view import cycle
             _owner = AokiServiceMixin.get_domain_based_owner_credential(context.domain)
             if _owner is not None:

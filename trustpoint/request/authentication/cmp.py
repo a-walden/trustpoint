@@ -815,15 +815,28 @@ class CmpCertConfAuthentication(CmpAuthenticationBase):
         )
 
         # AOKI devices trust the DevOwner root, which may be independent of the
-        # issuing CA. Protect pkiConf with the same domain DevOwnerID as the IP.
-        # Domains without a DevOwnerID retain the issuing-CA signer fallback.
-        from aoki.views import AokiServiceMixin  # noqa: PLC0415 - avoid the request/view import cycle
-
-        owner_credential = AokiServiceMixin.get_domain_based_owner_credential(issued_cred.domain)
-        if owner_credential is not None:
-            context.owner_credential = owner_credential
-            context.is_aoki = True
-            self.logger.info('certConf: using domain DevOwnerID to protect the pkiConf response.')
+        # issuing CA. Protect pkiConf with the same domain DevOwnerID as the IP, so a
+        # domain-blind device can verify it against the Belden DevOwner Root it trusts.
+        #
+        # ONLY for the AOKI domain-credential (LDevID) confirmation. An application
+        # certificate (tls_server / tls_client, requested post-onboarding via CMP cr
+        # authenticated with the LDevID) is confirmed by a client that trusts the
+        # DOMAIN issuing CA, not necessarily the DevOwner root — so its pkiConf must be
+        # signed by the issuing CA (the default signer). Keying this on the confirmed
+        # credential type keeps AOKI unchanged while letting LDevID-holding clients
+        # enroll application certificates over plain domain-CA trust.
+        from pki.models.issued_credential import IssuedCredentialModel  # noqa: PLC0415
+        is_domain_credential = (
+            issued_cred.issued_credential_type
+            == IssuedCredentialModel.IssuedCredentialType.DOMAIN_CREDENTIAL
+        )
+        if is_domain_credential:
+            from aoki.views import AokiServiceMixin  # noqa: PLC0415 - avoid the request/view import cycle
+            owner_credential = AokiServiceMixin.get_domain_based_owner_credential(issued_cred.domain)
+            if owner_credential is not None:
+                context.owner_credential = owner_credential
+                context.is_aoki = True
+                self.logger.info('certConf: using domain DevOwnerID to protect the pkiConf response.')
 
     def _resolve_certconf_hash_algorithm(self, context: CmpCertConfRequestContext) -> hashes.HashAlgorithm:
         """Resolve the confirmation digest through the shared allowlist."""
