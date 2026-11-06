@@ -866,19 +866,34 @@ class CmpPkiConfResponder(CmpMessageResponder):
             exc_msg = 'CmpPkiConfResponder requires a CmpCertConfRequestContext.'
             raise TypeError(exc_msg)
 
-        # AOKI: the pkiConf must stay protected by the same domain DevOwnerID as
-        # the IP, so a domain-blind device can verify it against the Belden
-        # DevOwner Root it trusts. The certConf that triggers this pkiConf may be
-        # processed on a pipeline that did not set owner_credential, so resolve the
-        # domain DevOwnerID here when it is missing — but ONLY for an AOKI transaction
-        # (context.is_aoki, set by the certConf handler for a domain-credential
-        # confirmation). A plain application-cert certConf (tls_server / tls_client)
-        # keeps the issuing-CA signer, which the enrolling client trusts.
-        if context.is_aoki and context.owner_credential is None and context.domain is not None:
-            from aoki.views import AokiServiceMixin  # noqa: PLC0415 - avoid request/view import cycle
-            _owner = AokiServiceMixin.get_domain_based_owner_credential(context.domain)
-            if _owner is not None:
-                context.owner_credential = _owner
+        # AOKI: the pkiConf must stay protected by the same domain DevOwnerID as the IP,
+        # so a domain-blind device can verify it against the Belden DevOwner Root it
+        # trusts. Whether this is AOKI is decided from the CONFIRMED credential, not from
+        # context.is_aoki: the composite authenticator returns at the first component that
+        # sets context.device (CmpSignatureBasedCertificationAuthentication wins for a
+        # certConf), so the certConf-specific component that would set is_aoki may never
+        # run. Resolve the confirmed credential by its certHash here and use the DevOwnerID
+        # only for a DOMAIN_CREDENTIAL (AOKI LDevID) confirmation; an application cert
+        # (tls_server / tls_client) keeps the issuing-CA signer, which the client trusts.
+        if context.owner_credential is None and context.domain is not None and context.cert_hash is not None:
+            try:
+                from pki.models.issued_credential import IssuedCredentialModel  # noqa: PLC0415
+                from request import cert_conf as _cert_conf  # noqa: PLC0415
+                hash_alg = _cert_conf.resolve_certconf_hash_algorithm(context.cert_hash_algorithm_oid)
+                _issued = _cert_conf.resolve_issued_credential_by_cert_hash(
+                    context.cert_hash, hash_alg,
+                    require_implicit_hash=context.cert_hash_algorithm_oid is None,
+                )
+                if (_issued is not None
+                        and _issued.issued_credential_type
+                        == IssuedCredentialModel.IssuedCredentialType.DOMAIN_CREDENTIAL):
+                    from aoki.views import AokiServiceMixin  # noqa: PLC0415
+                    _owner = AokiServiceMixin.get_domain_based_owner_credential(context.domain)
+                    if _owner is not None:
+                        context.owner_credential = _owner
+                        context.is_aoki = True
+            except Exception:  # best-effort: fall back to the issuing-CA signer
+                CmpPkiConfResponder.logger.exception('pkiConf: could not resolve AOKI DevOwnerID signer')
         if context.issuer_credential is not None:
             signer_credential = context.owner_credential or context.issuer_credential
             issuer_cert: x509.Certificate | None = signer_credential.get_certificate()
