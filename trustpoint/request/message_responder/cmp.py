@@ -335,11 +335,24 @@ class CmpInitializationResponder(CmpMessageResponder):
         ip_body['ip'] = rfc4210.CertRepMessage().subtype(
             explicitTag=tag.Tag(tag.tagClassContext, tag.tagFormatConstructed, 1)
         )
-        # caPubs: optionally hand the requester CA certificates to trust (SZTO: the
-        # management CA root for the Onboarding Service's TLS server certificate).
-        # Not for AOKI: a domain-blind device trusts only the DevOwner Root and must
-        # not receive other CAs.
-        ip_body['ip']['caPubs'] = build_ca_pubs([] if is_aoki else load_ca_pubs_certificates())
+        # caPubs: hand the requester CA certificates to trust.
+        #  - AOKI: the device is domain-blind and verifies the IP against the Belden
+        #    DevOwner Root (via the DevOwnerID signer chain in extraCerts). It does NOT
+        #    yet trust the domain issuing CA, which it needs to validate the application
+        #    certificate CR/CP it makes right after onboarding. caPubs rides inside this
+        #    DevOwnerID-protected IP, so it is authenticated — deliver the issuing-CA
+        #    chain here and the device installs it as the trust anchor for operational
+        #    certs (captured via openssl cmp -cacertsout).
+        #  - non-AOKI (challenge password / SZTO proxy): the management CA root for the
+        #    Onboarding Service's TLS server certificate, from TRUSTPOINT_CMP_CA_PUBS_FILE.
+        if is_aoki:
+            ca_pubs_certs = [
+                issuer_credential.get_certificate(),
+                *issuer_credential.get_certificate_chain(),
+            ]
+        else:
+            ca_pubs_certs = load_ca_pubs_certificates()
+        ip_body['ip']['caPubs'] = build_ca_pubs(ca_pubs_certs)
 
         cert_response = rfc4210.CertResponse()
         cert_response['certReqId'] = 0
